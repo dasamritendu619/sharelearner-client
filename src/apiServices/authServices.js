@@ -1,0 +1,348 @@
+import axios from 'axios';
+import { backendUrl } from '../conf/conf';
+
+export class AuthService {
+
+    async registerUser({ username, email, password, fullName }) {
+        const accessToken = localStorage.getItem('accessToken');
+        const refreshToken = localStorage.getItem('refreshToken');
+        try {
+            if (!username || !email || !password || !fullName) {
+                throw new Error('All fields are required');
+            }
+            const response = await axios.post(`${backendUrl}/api/v1/user/register`,{
+                username,
+                email,
+                password,
+                fullName
+            },{
+                headers:{
+                    "Authorization":`Bearer ${accessToken} ${refreshToken}`,
+                }
+            });
+            return response.data;
+        } catch (error) {
+            console.log("Error in registerUser",error);
+            return {status:error.status,message:error.message,data:null};
+        }
+    }
+
+
+    async verifyUser({otp , email}) {
+        const accessToken = localStorage.getItem('accessToken');
+        const refreshToken = localStorage.getItem('refreshToken');
+        try {
+            if(!otp || !email){
+                throw new Error('All fields are required');
+            }
+            const response = await axios.post(`${backendUrl}/api/v1/user/verify`,{
+                otp,
+                email
+            },{
+                headers:{
+                    Authorization:`Bearer ${accessToken} ${refreshToken}`
+                }
+            });
+            if (response.data.status >=400 || !response.data.data) {
+                throw new Error(response.data.message);
+            }
+            localStorage.setItem("accessToken",response.data.data.accessToken);
+            localStorage.setItem("refreshToken",response.data.data.refreshToken);
+
+            return response.data;
+        } catch (error) {
+            console.log("Error in verifyUser",error);
+            return {status:error.status,message:error.message,data:null};
+        }
+    }
+
+
+    async loginUser({ identifier, password }) {
+        const accessToken = localStorage.getItem('accessToken');
+        const refreshToken = localStorage.getItem('refreshToken');
+        try {
+            if (!identifier || !password) {
+                throw new Error('All fields are required');
+            }
+            const response = await axios.post(`${backendUrl}/api/v1/user/login`,{
+                identifier,
+                password
+            },{
+                headers:{
+                    Authorization:`Bearer ${accessToken} ${refreshToken}`
+                }
+            });
+            return response.data;
+        } catch (error) {
+            console.log("Error in loginUser",error);
+            return {status:error.status,message:error.message,data:null};
+        }
+    }
+
+
+    async logoutUser() {
+        const accessToken = localStorage.getItem('accessToken');
+        const refreshToken = localStorage.getItem('refreshToken');
+        try {
+            const response = await axios.post(`${backendUrl}/api/v1/user/logout`,{},{
+                headers:{
+                    Authorization:`Bearer ${accessToken} ${refreshToken}`
+                }
+            });
+            return response.data;
+        }
+        catch (error) {
+            console.log("Error in logoutUser",error);
+            return {status:error.status,message:error.message,data:null};
+        }
+    }
+
+
+    async getCurrentUser() {
+        const accessToken = localStorage.getItem('accessToken');
+        const refreshToken = localStorage.getItem('refreshToken');
+       
+        try {
+            const response = await axios.get(`${backendUrl}/api/v1/user/me`,{
+                headers:{
+                    Authorization:`Bearer ${accessToken} ${refreshToken}`
+                }
+            });
+            return response.data;
+        } catch (error) {
+            console.log("Error in getCurrentUser",error);
+            return {status:error.status,message:error.message,data:null};
+        }
+    }
+
+
+    async refreshAccessToken({}) {
+        const accessToken = localStorage.getItem('accessToken');
+        const refreshToken = localStorage.getItem('refreshToken');
+        try {
+            const response = await axios.post(`${backendUrl}/api/v1/user/refresh`,{},{
+                headers:{
+                    Authorization:`Bearer ${accessToken} ${refreshToken}`
+                }
+            });
+            
+            if (response.data.status >=400 || !response.data.data) {
+                throw new Error(response.data.message);
+            }
+            localStorage.setItem("accessToken",response.data.data.accessToken);
+
+            return response.data;
+            
+        } catch (error) {
+            console.log("Error in refreshAccessToken",error);
+            return {status:error.status,message:error.message,data:null};
+        }
+    }
+
+
+    async changePassword({oldPassword, newPassword}) {
+        const accessToken = localStorage.getItem('accessToken');
+        const refreshToken = localStorage.getItem('refreshToken');
+        try {
+            if (!oldPassword || !newPassword) {
+                throw new Error('All fields are required');
+            }
+            const response = await axios.patch(`${backendUrl}/api/v1/user/change-password`,{
+                oldPassword,
+                newPassword
+            },{
+                headers:{
+                    Authorization:`Bearer ${accessToken} ${refreshToken}`
+                }
+            });
+            return response.data;
+            
+        } catch (error) {
+            console.log("Error in changePassword",error);
+            return {status:error.status,message:error.message,data:null};
+        }
+    }
+
+
+    async sendForgotPasswordEmail({email}) {
+        const accessToken = localStorage.getItem('accessToken');
+        const refreshToken = localStorage.getItem('refreshToken');
+        try {
+            if(!email){
+                throw new Error('email is required');
+            }
+            const response = await axios.post(`${backendUrl}/api/v1/user/forgot-password`,{
+                email
+            },{
+                headers:{
+                    Authorization:`Bearer ${accessToken} ${refreshToken}`
+                }
+            });
+            return response.data;
+        } catch (error) {
+            console.log("Error in sendForgotPasswordEmail",error);
+            return {status:error.status,message:error.message,data:null};
+        }
+    }
+
+    
+    async resetPassword({otp, email, newPassword}) {
+        const accessToken = localStorage.getItem('accessToken');
+        const refreshToken = localStorage.getItem('refreshToken');
+        try {
+           if(!otp || !email || !newPassword){
+               throw new Error('All fields are required');
+           }
+           const response = await axios.patch(`${backendUrl}/api/v1/user/verify-reset-password`,{
+               otp,
+               email,
+               newPassword
+           },{
+               headers:{
+                   Authorization:`Bearer ${accessToken} ${refreshToken}`
+               }
+           });
+           return response.data; 
+        } catch (error) {
+            console.log("Error in resetPassword",error);
+            return {status:error.status,message:error.message,data:null};
+        }
+    }
+
+
+    async sendEmailForUpdateEmailRequest({newEmail }) {
+        const accessToken = localStorage.getItem('accessToken');
+        const refreshToken = localStorage.getItem('refreshToken');
+        try {
+            if(!newEmail){
+                throw new Error('email is required');
+            }
+            const response = await axios.post(`${backendUrl}/api/v1/user/update-email`,{
+                email:newEmail
+            },{
+                headers:{
+                    Authorization:`Bearer ${accessToken} ${refreshToken}`
+                }
+            });
+            return response.data;
+        } catch (error) {
+           console.log("Error in sendEmailForUpdateEmailRequest",error);
+              return {status:error.status,message:error.message,data:null}; 
+        }
+    }
+
+
+    async changeEmail({otp, newEmail}) {
+        const accessToken = localStorage.getItem('accessToken');
+        const refreshToken = localStorage.getItem('refreshToken');
+        try {
+            if(!otp || !newEmail){
+                throw new Error('All fields are required');
+            }
+            const response = await axios.post(`${backendUrl}/api/v1/user/verify-change-email`,{
+                otp,
+                email:newEmail
+            },{
+                headers:{
+                    Authorization:`Bearer ${accessToken} ${refreshToken}`
+                }
+            });
+            return response.data;
+        } catch (error) {
+            console.log("Error in changeEmail",error);
+            return {status:error.status,message:error.message,data:null};
+        }
+    }
+
+
+    async updateUserDetails({fullName,dob,gender,education,about,address,links,interest}) {
+        const accessToken = localStorage.getItem('accessToken');
+        const refreshToken = localStorage.getItem('refreshToken');
+        try {
+            if (!fullName && !dob && !gender && !education && !about && !address && !links && !interest) {
+                throw new Error(400, "Atleast one field is required");
+            }
+            const response = await axios.patch(`${backendUrl}/api/v1/user/update-details`,{
+                fullName,
+                dob,
+                gender,
+                education,
+                about,
+                address,
+                links,
+                interest
+            },{
+                headers:{
+                    Authorization:`Bearer ${accessToken} ${refreshToken}`
+                }
+            });
+            return response.data;
+        } catch (error) {
+           console.log("Error in updateUserDetails",error);
+              return {status:error.status,message:error.message,data:null}; 
+        }
+    }
+
+
+    async updateAvatar({avatarUrl}) {
+        const accessToken = localStorage.getItem('accessToken');
+        const refreshToken = localStorage.getItem('refreshToken');
+        try {
+            if (!avatarUrl) {
+                throw new Error(400, "Avatar URL is required");
+            }
+            const response = await axios.patch(`${backendUrl}/api/v1/user/update-avatar`,{
+                avatarUrl
+            },{
+                headers:{   
+                    Authorization:`Bearer ${accessToken} ${refreshToken}`
+                }
+            });
+            return response.data;
+        } catch (error) {
+            console.log("Error in updateAvatar",error);
+            return {status:error.status,message:error.message,data:null};
+        }
+    }
+
+
+    async updateCoverPhoto({coverPhotoUrl}) {
+        const accessToken = localStorage.getItem('accessToken');
+        const refreshToken = localStorage.getItem('refreshToken');
+        try {
+            if (!coverPhotoUrl) {
+                throw new Error(400, "Cover Photo URL is required");
+            }
+            const response = await axios.patch(`${backendUrl}/api/v1/user/update-cover-photo`,{
+                coverPhotoUrl
+            },{
+                headers:{
+                    Authorization:`Bearer ${accessToken} ${refreshToken}`
+                }
+            });
+            return response.data;
+        } catch (error) {
+            console.log("Error in updateCoverPhoto",error);
+            return {status:error.status,message:error.message,data:null};
+        }
+    }
+
+
+    async checkUserNameAvailability({username}) {
+        try {
+           if(!username){
+               throw new Error('username is required');
+           }
+           const response = await axios.get(`${backendUrl}/api/v1/user/check-username/${username}`);
+           return response.data;
+        } catch (error) {
+            console.log("Error in checkUserNameAvailability",error);
+            return {status:error.status,message:error.message,data:null};
+        }
+    }
+
+
+
+}
+
+export const authService = new AuthService();
