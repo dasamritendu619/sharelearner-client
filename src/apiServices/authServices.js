@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { backendUrl } from '../conf/conf';
+import conf from '../conf/conf';
 
 export class AuthService {
 
@@ -10,7 +10,7 @@ export class AuthService {
             if (!username || !email || !password || !fullName) {
                 throw new Error('All fields are required');
             }
-            const response = await axios.post(`${backendUrl}/api/v1/user/register`,{
+            const response = await axios.post(`${conf.backendUrl}/api/v1/user/register`,{
                 username,
                 email,
                 password,
@@ -28,16 +28,18 @@ export class AuthService {
     }
 
 
-    async verifyUser({otp , email}) {
+    async verifyUser({otp , identifier}) {
         const accessToken = localStorage.getItem('accessToken');
         const refreshToken = localStorage.getItem('refreshToken');
         try {
-            if(!otp || !email){
+            if(!otp || !identifier){
                 throw new Error('All fields are required');
             }
-            const response = await axios.post(`${backendUrl}/api/v1/user/verify`,{
+            console.log(otp),
+            console.log(identifier)
+            const response = await axios.post(`${conf.backendUrl}/api/v1/user/verify`,{
                 otp,
-                email
+                identifier
             },{
                 headers:{
                     Authorization:`Bearer ${accessToken} ${refreshToken}`
@@ -64,7 +66,7 @@ export class AuthService {
             if (!identifier || !password) {
                 throw new Error('All fields are required');
             }
-            const response = await axios.post(`${backendUrl}/api/v1/user/login`,{
+            const response = await axios.post(`${conf.backendUrl}/api/v1/user/login`,{
                 identifier,
                 password
             },{
@@ -84,7 +86,7 @@ export class AuthService {
         const accessToken = localStorage.getItem('accessToken');
         const refreshToken = localStorage.getItem('refreshToken');
         try {
-            const response = await axios.post(`${backendUrl}/api/v1/user/logout`,{},{
+            const response = await axios.post(`${conf.backendUrl}/api/v1/user/logout`,{},{
                 headers:{
                     Authorization:`Bearer ${accessToken} ${refreshToken}`
                 }
@@ -103,7 +105,7 @@ export class AuthService {
         const refreshToken = localStorage.getItem('refreshToken');
        
         try {
-            const response = await axios.get(`${backendUrl}/api/v1/user/me`,{
+            const response = await axios.get(`${conf.backendUrl}/api/v1/user/me`,{
                 headers:{
                     Authorization:`Bearer ${accessToken} ${refreshToken}`
                 }
@@ -120,7 +122,7 @@ export class AuthService {
         const accessToken = localStorage.getItem('accessToken');
         const refreshToken = localStorage.getItem('refreshToken');
         try {
-            const response = await axios.post(`${backendUrl}/api/v1/user/refresh`,{},{
+            const response = await axios.post(`${conf.backendUrl}/api/v1/user/refresh`,{},{
                 headers:{
                     Authorization:`Bearer ${accessToken} ${refreshToken}`
                 }
@@ -147,7 +149,7 @@ export class AuthService {
             if (!oldPassword || !newPassword) {
                 throw new Error('All fields are required');
             }
-            const response = await axios.patch(`${backendUrl}/api/v1/user/change-password`,{
+            const response = await axios.patch(`${conf.backendUrl}/api/v1/user/change-password`,{
                 oldPassword,
                 newPassword
             },{
@@ -171,7 +173,7 @@ export class AuthService {
             if(!email){
                 throw new Error('email is required');
             }
-            const response = await axios.post(`${backendUrl}/api/v1/user/forgot-password`,{
+            const response = await axios.post(`${conf.backendUrl}/api/v1/user/forgot-password`,{
                 email
             },{
                 headers:{
@@ -193,7 +195,7 @@ export class AuthService {
            if(!otp || !email || !newPassword){
                throw new Error('All fields are required');
            }
-           const response = await axios.patch(`${backendUrl}/api/v1/user/verify-reset-password`,{
+           const response = await axios.patch(`${conf.backendUrl}/api/v1/user/verify-reset-password`,{
                otp,
                email,
                newPassword
@@ -217,7 +219,7 @@ export class AuthService {
             if(!newEmail){
                 throw new Error('email is required');
             }
-            const response = await axios.post(`${backendUrl}/api/v1/user/update-email`,{
+            const response = await axios.post(`${conf.backendUrl}/api/v1/user/update-email`,{
                 email:newEmail
             },{
                 headers:{
@@ -239,7 +241,7 @@ export class AuthService {
             if(!otp || !newEmail){
                 throw new Error('All fields are required');
             }
-            const response = await axios.post(`${backendUrl}/api/v1/user/verify-change-email`,{
+            const response = await axios.post(`${conf.backendUrl}/api/v1/user/verify-change-email`,{
                 otp,
                 email:newEmail
             },{
@@ -262,7 +264,7 @@ export class AuthService {
             if (!fullName && !dob && !gender && !education && !about && !address && !links && !interest) {
                 throw new Error(400, "Atleast one field is required");
             }
-            const response = await axios.patch(`${backendUrl}/api/v1/user/update-details`,{
+            const response = await axios.patch(`${conf.backendUrl}/api/v1/user/update-details`,{
                 fullName,
                 dob,
                 gender,
@@ -291,7 +293,7 @@ export class AuthService {
             if (!avatarUrl) {
                 throw new Error(400, "Avatar URL is required");
             }
-            const response = await axios.patch(`${backendUrl}/api/v1/user/update-avatar`,{
+            const response = await axios.patch(`${conf.backendUrl}/api/v1/user/update-avatar`,{
                 avatarUrl
             },{
                 headers:{   
@@ -313,7 +315,7 @@ export class AuthService {
             if (!coverPhotoUrl) {
                 throw new Error(400, "Cover Photo URL is required");
             }
-            const response = await axios.patch(`${backendUrl}/api/v1/user/update-cover-photo`,{
+            const response = await axios.patch(`${conf.backendUrl}/api/v1/user/update-cover-photo`,{
                 coverPhotoUrl
             },{
                 headers:{
@@ -333,7 +335,7 @@ export class AuthService {
            if(!username){
                throw new Error('username is required');
            }
-           const response = await axios.get(`${backendUrl}/api/v1/user/check-username/${username}`);
+           const response = await axios.get(`${conf.backendUrl}/api/v1/user/check-username/${username}`);
            return response.data;
         } catch (error) {
             console.log("Error in checkUserNameAvailability",error);
