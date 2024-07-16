@@ -48,6 +48,7 @@ export default function InputOTPControlled() {
             dispatch(login(responce.data.updatedUser))
             toast({
                 variant: "success",
+                className: "bg-green-500",
                 title: "Success",
                 description: "OTP Verified Successfully!",
             })

@@ -59,8 +59,9 @@ export default function Signup() {
         }
         else {
             toast({
-                title: "Account Created",
-                description: "Your account has been created successfully.",
+                className: "bg-green-500",
+                title: "Account Created Successfully",
+                description: "Please verify your email to continue",
               }) 
             setIsLoading(false)
             navigate(`/verify-user?identifier=${username}`)

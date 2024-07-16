@@ -28,8 +28,8 @@ export  default function SentForgotPasswordEmail() {
   const onSubmit = async (data) => {
     if(!data.email.trim()) {
       toast({
-        title: "Uh oh! Something went wrong.",
-        description: "Email is required",
+        variant: "destructive",
+        title: "Email is required",
       })
       return ;
     }
@@ -48,6 +48,7 @@ export  default function SentForgotPasswordEmail() {
       toast({
         variant: "success",
         title: "Success",
+        className: "bg-green-500",
         description: "Email Sent Successfully!",
       })
       navigate(`/reset-password?email=${data.email.trim()}`)

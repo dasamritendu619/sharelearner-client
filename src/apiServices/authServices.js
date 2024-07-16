@@ -117,6 +117,24 @@ export class AuthService {
         }
     }
 
+    
+    async getCurrentUserDetails() {
+        const accessToken = localStorage.getItem('accessToken');
+        const refreshToken = localStorage.getItem('refreshToken');
+       
+        try {
+            const response = await axios.get(`${conf.backendUrl}/api/v1/user/me/details`,{
+                headers:{
+                    Authorization:`Bearer ${accessToken} ${refreshToken}`
+                }
+            });
+            return response.data;
+        } catch (error) {
+            console.log("Error in getCurrentUser",error);
+            return {status:error.status,message:error.message,data:null};
+        }
+    }
+
 
     async refreshAccessToken({}) {
         const accessToken = localStorage.getItem('accessToken');

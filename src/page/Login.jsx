@@ -17,15 +17,17 @@ export default function Login() {
     const onSubmit = async (data) => {
       if (!data.identifier.trim()) {
         toast({
-          title: "Uh oh! Something went wrong.",
-          description: "Email or Username is required",
+          variant: "destructive",
+          title: "Email or Username is required",
+          description: "Please enter your email or username",
         })
         return ;
       }
       if (!data.password.trim()) {
         toast({
-          title: "Uh oh! Something went wrong.",
-          description: "Password is required",
+          title: "Password is required",
+          description: "Please enter your password",
+          variant: "destructive",
         })
         return ;
       }
@@ -45,6 +47,7 @@ export default function Login() {
       else {
         toast({
           title: "Success",
+          className: "bg-green-500",
           description: "Login Successful!",
         })
         navigate(`/verify-user?identifier=${data.identifier.trim()}`)

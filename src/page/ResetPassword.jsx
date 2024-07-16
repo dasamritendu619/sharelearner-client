@@ -61,6 +61,7 @@ export  default function ResetPassword() {
     } else {
       toast({
         variant: "success",
+        className: "bg-green-500",
         title: "Success",
         description: "Password Reset Successfully!",
       })

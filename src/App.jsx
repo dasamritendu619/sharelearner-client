@@ -16,6 +16,7 @@ function App() {
       const response = await authService.getCurrentUser();
       if (!response.data || response.status >= 400) {
         console.log(response.data)
+        setLoading(false)
       }
       else {
         dispatch(login(response.data))
