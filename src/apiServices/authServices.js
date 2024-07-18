@@ -139,10 +139,13 @@ export class AuthService {
     }
 
 
-    async refreshAccessToken({}) {
+    async refreshAccessToken() {
         const accessToken = localStorage.getItem('accessToken');
         const refreshToken = localStorage.getItem('refreshToken');
         try {
+            if(!refreshToken){
+                throw new Error('refresh token is missing');
+            }
             const response = await axios.post(`${conf.backendUrl}/api/v1/user/refresh`,{},{
                 headers:{
                     Authorization:`Bearer ${accessToken} ${refreshToken}`

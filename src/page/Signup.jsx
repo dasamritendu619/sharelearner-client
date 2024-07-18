@@ -102,7 +102,8 @@ export default function Signup() {
       }, [username]);
 
     return (
-        <div className="w-full lg:grid lg:min-h-[600px] lg:grid-cols-2 xl:min-h-[800px]">
+        <div className="w-screen h-auto bg-blue-100 dark:bg-gray-950">
+            <div className="w-full lg:grid lg:min-h-[600px] lg:grid-cols-2 xl:min-h-[800px]">
             <div className="hidden bg-muted lg:block">
                 <img
                     src="/26217336_dv31_ofwk_220224.svg"
@@ -196,6 +197,8 @@ export default function Signup() {
                         <Button
                             onClick={() => {
                                 toast({
+                                    title: "Sorry, feature Not Available",
+                                    className: "bg-red-500",
                                     description: "This Feature is not available yet",
                                 })
                             }}
@@ -210,6 +213,7 @@ export default function Signup() {
                     </div>
                 </div>
             </div>
+        </div>
         </div>
     )
 }

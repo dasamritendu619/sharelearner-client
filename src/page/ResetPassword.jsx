@@ -76,7 +76,7 @@ export  default function ResetPassword() {
 }, [email])
 
   return (
-    <div className="w-screen h-screen grid place-content-center">
+    <div className="w-screen h-screen grid place-content-center bg-blue-100 dark:bg-gray-950">
       <Card className="w-full max-w-sm">
       <CardHeader>
         <CardTitle className="text-2xl">Reset Your Password!</CardTitle>

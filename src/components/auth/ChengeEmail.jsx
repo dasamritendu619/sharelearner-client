@@ -95,7 +95,7 @@ export default function ChengeEmail() {
             <CardHeader>
                 <CardTitle>Email</CardTitle>
                 <CardDescription>
-                    Chenge your account email hear. Click save when you're done.
+                    Change your account email here. Click save when you're done.
                 </CardDescription>
             </CardHeader>
             <CardContent className="space-y-2">

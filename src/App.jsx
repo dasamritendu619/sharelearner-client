@@ -5,7 +5,7 @@ import { useState,useEffect } from 'react'
 import { authService } from './apiServices/authServices'
 import { useDispatch } from 'react-redux'
 import { login } from './store/authSlice'
-import Loader from './components/Loader'
+import OurLogo from './components/OurLogo'
 
 function App() {
   const dispatch = useDispatch()
@@ -15,8 +15,13 @@ function App() {
     const verifyUser = async () => {
       const response = await authService.getCurrentUser();
       if (!response.data || response.status >= 400) {
-        console.log(response.data)
-        setLoading(false)
+        const res = await authService.refreshAccessToken();
+        if (!res.data || res.status >= 400) {
+          setLoading(false)
+        } else {
+          dispatch(login(res.data))
+          setLoading(false)
+        }
       }
       else {
         dispatch(login(response.data))
@@ -29,7 +34,7 @@ function App() {
   return (
     <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
     {
-      loading ? <Loader/> : 
+      loading ? <OurLogo/> : 
         <div>
       <Outlet />
       <Toaster />
