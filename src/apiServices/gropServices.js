@@ -1,5 +1,5 @@
 import axios from "axios";
-import { backendUrl } from "../conf/conf";
+import conf from '../conf/conf';
 
 export class GroupService {
 
@@ -18,7 +18,7 @@ export class GroupService {
             if (image) {
                 formData.append('image', image);
             }
-            const response = await axios.post(`${backendUrl}/api/v1/group/create`,formData,{
+            const response = await axios.post(`${conf.backendUrl}/api/v1/group/create`,formData,{
                 headers: {
                     Authorization: `Bearer ${accessToken} ${refreshToken}`
                 }
@@ -41,7 +41,7 @@ export class GroupService {
             if (!groupName && !description) {
                 throw new Error("Group name or description is required");
             }
-            const response = await axios.patch(`${backendUrl}/api/v1/group/update/${groupId}`,{
+            const response = await axios.patch(`${conf.backendUrl}/api/v1/group/update/${groupId}`,{
                 groupName,
                 description
             },{
@@ -67,7 +67,7 @@ export class GroupService {
             if (!image) {
                 throw new Error("Image Url is required");
             }
-            const response = await axios.patch(`${backendUrl}/api/v1/group/update-icon/${groupId}`,{
+            const response = await axios.patch(`${conf.backendUrl}/api/v1/group/update-icon/${groupId}`,{
                 iconUrl:image
             },{
                 headers: {
@@ -91,7 +91,7 @@ export class GroupService {
             if (!image) {
                 throw new Error("Image Url is required");
             }
-            const response = await axios.patch(`${backendUrl}/api/v1/group/update-banner/${groupId}`,{
+            const response = await axios.patch(`${conf.backendUrl}/api/v1/group/update-banner/${groupId}`,{
                 bannerUrl:image
             },{
                 headers: {
@@ -113,7 +113,7 @@ export class GroupService {
             if (!groupId) {
                 throw new Error("Group id is required");
             }
-            const response = await axios.delete(`${backendUrl}/api/v1/group/delete/${groupId}`,{
+            const response = await axios.delete(`${conf.backendUrl}/api/v1/group/delete/${groupId}`,{
                 headers: {
                     Authorization: `Bearer ${accessToken} ${refreshToken}`
                 }

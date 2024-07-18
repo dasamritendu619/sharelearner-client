@@ -1,5 +1,5 @@
 import axios from "axios";
-import { backendUrl } from "../conf/conf";
+import conf from '../conf/conf';
 
 export class ReplyService {
 
@@ -14,7 +14,7 @@ export class ReplyService {
             if(!content){
                 throw new Error(400, "Content is required");
             }
-            const response = await axios.post(`${backendUrl}/api/v1/reply/create`, { 
+            const response = await axios.post(`${conf.backendUrl}/api/v1/reply/create`, { 
                 content, 
                 commentId },
                 {
@@ -41,7 +41,7 @@ export class ReplyService {
             if(!newContent){
                 throw new Error(400, "Content is required");
             }
-            const response = await axios.patch(`${backendUrl}/api/v1/reply/update/${replyId}`, {
+            const response = await axios.patch(`${conf.backendUrl}/api/v1/reply/update/${replyId}`, {
                 content: newContent
             },{
                 headers: {
@@ -63,7 +63,7 @@ export class ReplyService {
            if(!replyId){
                throw new Error(400, "Reply id is required");
            }
-              const response = await axios.delete(`${backendUrl}/api/v1/reply/delete/${replyId}`, {
+              const response = await axios.delete(`${conf.backendUrl}/api/v1/reply/delete/${replyId}`, {
                 headers: {
                      Authorization: `Bearer ${accessToken} ${refreshToken}`,
                 }
@@ -82,7 +82,7 @@ export class ReplyService {
           if(!commentId){
               throw new Error(400, "Comment id is required");
           }
-            const response = await axios.get(`${backendUrl}/api/v1/reply/getAll/${commentId}?page=${page}&limit=${limit}`, {
+            const response = await axios.get(`${conf.backendUrl}/api/v1/reply/getAll/${commentId}?page=${page}&limit=${limit}`, {
                 headers: {
                     Authorization: `Bearer ${accessToken} ${refreshToken}`,
                 }

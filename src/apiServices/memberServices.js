@@ -1,6 +1,5 @@
 import axios from "axios";
-import { backendUrl } from '../conf/conf';
-
+import conf from '../conf/conf';
 
 
 export class MemberService {
@@ -15,7 +14,7 @@ export class MemberService {
             if(!groupId){
                 throw new Error(400, "Group id is required");
             }
-            const response = await axios.patch(`${backendUrl}/api/v1/member/toggle-admin-role/${groupId}/${userId}`,{},{
+            const response = await axios.patch(`${conf.backendUrl}/api/v1/member/toggle-admin-role/${groupId}/${userId}`,{},{
                 headers: {
                     Authorization: `Bearer ${accessToken} ${refreshToken}`,
                 }
@@ -40,7 +39,7 @@ export class MemberService {
             if(!groupId){
                 throw new Error(400, "Group id is required");
             }
-            const response = await axios.post(`${backendUrl}/api/v1/member/add-member/${groupId}/${userId}`,{},{
+            const response = await axios.post(`${conf.backendUrl}/api/v1/member/add-member/${groupId}/${userId}`,{},{
                 headers: {
                     Authorization: `Bearer ${accessToken} ${refreshToken}`,
                 }
@@ -64,7 +63,7 @@ export class MemberService {
             if(!groupId){
                 throw new Error(400, "Group id is required");
             }
-            const response = await axios.post(`${backendUrl}/api/v1/member/join-group/${groupId}/${adminId}`,{},{
+            const response = await axios.post(`${conf.backendUrl}/api/v1/member/join-group/${groupId}/${adminId}`,{},{
                 headers: {
                     Authorization: `Bearer ${accessToken} ${refreshToken}`,
                 }
@@ -85,7 +84,7 @@ export class MemberService {
             if(!groupId){
                 throw new Error(400, "Group id is required");
             }
-            const response = await axios.delete(`${backendUrl}/api/v1/member/leave-group/${groupId}`,{
+            const response = await axios.delete(`${conf.backendUrl}/api/v1/member/leave-group/${groupId}`,{
                 headers: {
                     Authorization: `Bearer ${accessToken} ${refreshToken}`,
                 }
@@ -110,7 +109,7 @@ export class MemberService {
             if(!groupId){
                 throw new Error(400, "Group id is required");
             }
-            const response = await axios.delete(`${backendUrl}/api/v1/member/remove-member/${groupId}/${userId}`,{
+            const response = await axios.delete(`${conf.backendUrl}/api/v1/member/remove-member/${groupId}/${userId}`,{
                 headers: {
                     Authorization: `Bearer ${accessToken} ${refreshToken}`,
                 }

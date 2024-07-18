@@ -1,5 +1,5 @@
 import axios from "axios";
-import { backendUrl } from "../conf/conf";
+import conf from '../conf/conf';
 
 export class SavedService {
 
@@ -10,7 +10,7 @@ export class SavedService {
            if(!postId){
                throw new Error(400, "Post id is required");
            }
-           const response = await axios.post(`${backendUrl}/api/v1/saved/toggle/${postId}`,{},{
+           const response = await axios.post(`${conf.backendUrl}/api/v1/saved/toggle/${postId}`,{},{
                 headers: {
                      Authorization: `Bearer ${accessToken} ${refreshToken}`,
                 }
@@ -26,7 +26,7 @@ export class SavedService {
         const accessToken = localStorage.getItem('accessToken');
         const refreshToken = localStorage.getItem('refreshToken');
         try {
-            const response = await axios.get(`${backendUrl}/api/v1/saved?page=${page}&limit=${limit}`,{
+            const response = await axios.get(`${conf.backendUrl}/api/v1/saved?page=${page}&limit=${limit}`,{
                 headers: {
                     Authorization: `Bearer ${accessToken} ${refreshToken}`,
                 }

@@ -1,5 +1,5 @@
 import axios from "axios";
-import { backendUrl } from "../conf/conf";
+import conf from '../conf/conf';
 
 export class LikesService {
 
@@ -10,7 +10,7 @@ export class LikesService {
             if (!postId) {
                 throw new Error("Post id is required");
             }
-            const response = await axios.post(`${backendUrl}/api/v1/likes/toggle-post/${postId}`,{},{
+            const response = await axios.post(`${conf.backendUrl}/api/v1/likes/toggle-post/${postId}`,{},{
                 headers: {
                     Authorization: `Bearer ${accessToken} ${refreshToken}`
                 }
@@ -30,7 +30,7 @@ export class LikesService {
             if (!commentId) {
                 throw new Error("Comment id is required");
             }
-            const response = await axios.post(`${backendUrl}/api/v1/likes/toggle-comment/${commentId}`,{},{
+            const response = await axios.post(`${conf.backendUrl}/api/v1/likes/toggle-comment/${commentId}`,{},{
                 headers: {
                     Authorization: `Bearer ${accessToken} ${refreshToken}`
                 }
@@ -49,7 +49,7 @@ export class LikesService {
             if (!replyId) {
                 throw new Error("Reply id is required");
             }
-            const response = await axios.post(`${backendUrl}/api/v1/likes/toggle-reply/${replyId}`,{},{
+            const response = await axios.post(`${conf.backendUrl}/api/v1/likes/toggle-reply/${replyId}`,{},{
                 headers: {
                     Authorization: `Bearer ${accessToken} ${refreshToken}`
                 }
@@ -68,7 +68,7 @@ export class LikesService {
             if (!postId) {
                 throw new Error("Post id is required");
             }
-            const response = await axios.get(`${backendUrl}/api/v1/likes/profiles/${postId}`,{
+            const response = await axios.get(`${conf.backendUrl}/api/v1/likes/profiles/${postId}`,{
                 headers: {
                     Authorization: `Bearer ${accessToken} ${refreshToken}`
                 }

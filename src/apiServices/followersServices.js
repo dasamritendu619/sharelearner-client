@@ -1,5 +1,5 @@
 import axios from "axios";
-import { backendUrl } from "../conf/conf";
+import conf from '../conf/conf';
 
 export class FollowersService {
 
@@ -10,7 +10,7 @@ export class FollowersService {
             if (!profileId) {
                 throw new Error("Profile id is required");
             }
-            const response = await axios.post(`${backendUrl}/api/v1/followers/toggle-follow/${profileId}`,{},{
+            const response = await axios.post(`${conf.backendUrl}/api/v1/followers/toggle-follow/${profileId}`,{},{
                 headers: {
                     Authorization: `Bearer ${accessToken} ${refreshToken}`
                 }
@@ -29,7 +29,7 @@ export class FollowersService {
             if (!username) {
                 throw new Error("Username is required");
             }
-            const response = await axios.get(`${backendUrl}/api/v1/followers/followers/${username}?page=${page}&limit=${limit}`, {
+            const response = await axios.get(`${conf.backendUrl}/api/v1/followers/followers/${username}?page=${page}&limit=${limit}`, {
                 headers: {
                     Authorization: `Bearer ${accessToken} ${refreshToken}`
                 }
@@ -48,7 +48,7 @@ export class FollowersService {
             if (!username) {
                 throw new Error("Username is required");
             }
-            const response = await axios.get(`${backendUrl}/api/v1/followers/followings/${username}?page=${page}&limit=${limit}`, {
+            const response = await axios.get(`${conf.backendUrl}/api/v1/followers/followings/${username}?page=${page}&limit=${limit}`, {
                 headers: {
                     Authorization: `Bearer ${accessToken} ${refreshToken}`
                 }

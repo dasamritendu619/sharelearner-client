@@ -14,6 +14,7 @@ import {
   ResetPassword,
   ErrorPage,
   UpdateUser,
+  CreatePost,
 } from './index.js'
 
 const routes = createBrowserRouter(
@@ -54,6 +55,36 @@ const routes = createBrowserRouter(
       <Route path="update-user" element={
         <AuthLayout authentication={true}>
           <UpdateUser />
+        </AuthLayout>
+      } />
+
+      <Route path="create-blog-post" element={
+        <AuthLayout authentication={true}>
+          <CreatePost type="blog" />
+        </AuthLayout>
+      } />
+
+      <Route path="create-photo-post" element={
+        <AuthLayout authentication={true}>
+          <CreatePost type="photo" />
+        </AuthLayout>
+      } />
+
+      <Route path="create-video-post" element={
+        <AuthLayout authentication={true}>
+          <CreatePost type="video" />
+        </AuthLayout>
+      } />
+
+      <Route path="create-pdf-post" element={
+        <AuthLayout authentication={true}>
+          <CreatePost type="pdf" />
+        </AuthLayout>
+      } />
+
+      <Route path="fork-post" element={
+        <AuthLayout authentication={true}>
+          <CreatePost type="forked" />
         </AuthLayout>
       } />
       

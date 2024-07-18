@@ -1,5 +1,5 @@
 import axios from "axios";
-import { backendUrl } from "../conf/conf";
+import conf from '../conf/conf';
 
 export class PostService{
 
@@ -16,7 +16,7 @@ export class PostService{
             formData.append('type',type);
             formData.append('visibility',visibility);
 
-          const response = await axios.post(`${backendUrl}/api/v1/post/create`, formData,
+          const response = await axios.post(`${conf.backendUrl}/api/v1/post/create`, formData,
             {
                 headers: {
                     Authorization: `Bearer ${accessToken} ${refreshToken}`,
@@ -36,7 +36,7 @@ export class PostService{
             if(!postId){
                 throw new Error(400, "Post Id is required to fork post");
             }
-            const response = await axios.post(`${backendUrl}/api/v1/post/fork`, {
+            const response = await axios.post(`${conf.backendUrl}/api/v1/post/fork`, {
                 postId,
                 visibility,
                 title
@@ -62,7 +62,7 @@ export class PostService{
             if(!newTitle && !newContent && !newVisibility){
                 throw new Error(400, "At least one field is required to update post");
             }
-           const response = await axios.patch(`${backendUrl}/api/v1/post/update/${postId}`, {
+           const response = await axios.patch(`${conf.backendUrl}/api/v1/post/update/${postId}`, {
             title: newTitle, 
             content: newContent, 
             visibility: newVisibility
@@ -86,7 +86,7 @@ export class PostService{
             if(!postId){
                 throw new Error(400, "Post Id is required to delete post");
             }
-            const response = await axios.delete(`${backendUrl}/api/v1/post/delete/${postId}`,{
+            const response = await axios.delete(`${conf.backendUrl}/api/v1/post/delete/${postId}`,{
                 headers: {
                     Authorization: `Bearer ${accessToken} ${refreshToken}`,
                 }
@@ -107,7 +107,7 @@ export class PostService{
             if(!postId){
                 throw new Error(400, "Post Id is required to get post");
             }
-            const response = await axios.get(`${backendUrl}/api/v1/post/get/${postId}`,{
+            const response = await axios.get(`${conf.backendUrl}/api/v1/post/get/${postId}`,{
                 headers: {
                     Authorization: `Bearer ${accessToken} {refreshToken}`,
                 }
@@ -124,7 +124,7 @@ export class PostService{
         const accessToken = localStorage.getItem('accessToken');
         const refreshToken = localStorage.getItem('refreshToken');
         try {
-            const response = await axios.get(`${backendUrl}/api/v1/post/get-all?page=${page}&limit=${limit}&type=${type}`,{
+            const response = await axios.get(`${conf.backendUrl}/api/v1/post/get-all?page=${page}&limit=${limit}&type=${type}`,{
                 headers: {
                     Authorization: `Bearer ${accessToken} ${refreshToken}`,
                 }

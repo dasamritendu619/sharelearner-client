@@ -1,5 +1,5 @@
 import axios from 'axios';
-import {backendUrl} from '../conf/conf'
+import conf from '../conf/conf';
 
 export class CommentService {
 
@@ -13,7 +13,7 @@ export class CommentService {
             if (!content) {
                 throw new Error("Content is required");   
             }
-            const response = await axios.post(`${backendUrl}/api/v1/comment/create`, {postId, content}, {
+            const response = await axios.post(`${conf.backendUrl}/api/v1/comment/create`, {postId, content}, {
                 headers: {
                     Authorization: `Bearer ${accessToken} ${refreshToken}`
                 }
@@ -37,7 +37,7 @@ export class CommentService {
             if (!content) {
                 throw new Error("Content is required");   
             }
-            const response = await axios.patch(`${backendUrl}/api/v1/comment/update/${commentId}`, {content}, {
+            const response = await axios.patch(`${conf.backendUrl}/api/v1/comment/update/${commentId}`, {content}, {
                 headers: {
                     Authorization: `Bearer ${accessToken} ${refreshToken}`
                 }
@@ -58,7 +58,7 @@ export class CommentService {
             if (!commentId) {
                 throw new Error("Comment id is required");   
             }
-            const response = await axios.delete(`${backendUrl}/api/v1/comment/delete/${commentId}`, {
+            const response = await axios.delete(`${conf.backendUrl}/api/v1/comment/delete/${commentId}`, {
                 headers: {
                     Authorization: `Bearer ${accessToken} ${refreshToken}`
                 }
@@ -79,7 +79,7 @@ export class CommentService {
             if (!postId) {
                 throw new Error("Post id is required");   
             }
-            const response = await axios.get(`${backendUrl}/api/v1/comment/getall/${postId}?page=${page}&limit=${limit}`, 
+            const response = await axios.get(`${conf.backendUrl}/api/v1/comment/getall/${postId}?page=${page}&limit=${limit}`, 
                 {
                 headers: {
                     Authorization: `Bearer ${accessToken} ${refreshToken}`
