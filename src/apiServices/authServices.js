@@ -23,7 +23,7 @@ export class AuthService {
             return response.data;
         } catch (error) {
             console.log("Error in registerUser",error);
-            return {status:error.status,message:error.message,data:null};
+            return {status:error.status || 400,message:error.message || "Something Went Wrong!",data:null};
         }
     }
 
@@ -54,7 +54,7 @@ export class AuthService {
             return response.data;
         } catch (error) {
             console.log("Error in verifyUser",error);
-            return {status:error.status,message:error.message,data:null};
+            return {status:error.status || 400,message:error.message || "Something Went Wrong!",data:null};
         }
     }
 
@@ -77,7 +77,7 @@ export class AuthService {
             return response.data;
         } catch (error) {
             console.log("Error in loginUser",error);
-            return {status:error.status,message:error.message,data:null};
+            return {status:error.status || 400,message:error.message || "Something Went Wrong!",data:null};
         }
     }
 
@@ -95,7 +95,7 @@ export class AuthService {
         }
         catch (error) {
             console.log("Error in logoutUser",error);
-            return {status:error.status,message:error.message,data:null};
+            return {status:error.status || 400,message:error.message || "Something Went Wrong!",data:null};
         }
     }
 
@@ -105,6 +105,9 @@ export class AuthService {
         const refreshToken = localStorage.getItem('refreshToken');
        
         try {
+            if (!accessToken || !refreshToken) {
+                throw new Error('Access token or refresh token is missing');
+            }
             const response = await axios.get(`${conf.backendUrl}/api/v1/user/me`,{
                 headers:{
                     Authorization:`Bearer ${accessToken} ${refreshToken}`
@@ -113,7 +116,7 @@ export class AuthService {
             return response.data;
         } catch (error) {
             console.log("Error in getCurrentUser",error);
-            return {status:error.status,message:error.message,data:null};
+            return {status:error.status || 400,message:error.message || "Something Went Wrong!",data:null};
         }
     }
 
@@ -131,7 +134,7 @@ export class AuthService {
             return response.data;
         } catch (error) {
             console.log("Error in getCurrentUser",error);
-            return {status:error.status,message:error.message,data:null};
+            return {status:error.status || 400,message:error.message || "Something Went Wrong!",data:null};
         }
     }
 
@@ -155,7 +158,7 @@ export class AuthService {
             
         } catch (error) {
             console.log("Error in refreshAccessToken",error);
-            return {status:error.status,message:error.message,data:null};
+            return {status:error.status || 400,message:error.message || "Something Went Wrong!",data:null};
         }
     }
 
@@ -179,7 +182,7 @@ export class AuthService {
             
         } catch (error) {
             console.log("Error in changePassword",error);
-            return {status:error.status,message:error.message,data:null};
+            return {status:error.status || 400,message:error.message || "Something Went Wrong!",data:null};
         }
     }
 
@@ -201,7 +204,7 @@ export class AuthService {
             return response.data;
         } catch (error) {
             console.log("Error in sendForgotPasswordEmail",error);
-            return {status:error.status,message:error.message,data:null};
+            return {status:error.status || 400,message:error.message || "Something Went Wrong!",data:null};
         }
     }
 
@@ -225,7 +228,7 @@ export class AuthService {
            return response.data; 
         } catch (error) {
             console.log("Error in resetPassword",error);
-            return {status:error.status,message:error.message,data:null};
+            return {status:error.status || 400,message:error.message || "Something Went Wrong!",data:null};
         }
     }
 
@@ -247,7 +250,7 @@ export class AuthService {
             return response.data;
         } catch (error) {
            console.log("Error in sendEmailForUpdateEmailRequest",error);
-              return {status:error.status,message:error.message,data:null}; 
+              return {status:error.status || 400,message:error.message || "Something Went Wrong!",data:null}; 
         }
     }
 
@@ -270,7 +273,7 @@ export class AuthService {
             return response.data;
         } catch (error) {
             console.log("Error in changeEmail",error);
-            return {status:error.status,message:error.message,data:null};
+            return {status:error.status || 400,message:error.message || "Something Went Wrong!",data:null};
         }
     }
 
@@ -299,7 +302,7 @@ export class AuthService {
             return response.data;
         } catch (error) {
            console.log("Error in updateUserDetails",error);
-              return {status:error.status,message:error.message,data:null}; 
+              return {status:error.status || 400,message:error.message || "Something Went Wrong!",data:null}; 
         }
     }
 
@@ -321,7 +324,7 @@ export class AuthService {
             return response.data;
         } catch (error) {
             console.log("Error in updateAvatar",error);
-            return {status:error.status,message:error.message,data:null};
+            return {status:error.status || 400,message:error.message || "Something Went Wrong!",data:null};
         }
     }
 
@@ -343,7 +346,7 @@ export class AuthService {
             return response.data;
         } catch (error) {
             console.log("Error in updateCoverPhoto",error);
-            return {status:error.status,message:error.message,data:null};
+            return {status:error.status || 400,message:error.message || "Something Went Wrong!",data:null};
         }
     }
 
@@ -357,7 +360,7 @@ export class AuthService {
            return response.data;
         } catch (error) {
             console.log("Error in checkUserNameAvailability",error);
-            return {status:error.status,message:error.message,data:null};
+            return {status:error.status || 400,message:error.message || "Something Went Wrong!",data:null};
         }
     }
 

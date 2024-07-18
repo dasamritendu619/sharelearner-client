@@ -18,7 +18,7 @@ export class SavedService {
               return response.data;
         } catch (error) {
             console.log("Error in toggling saved post " ,error);
-            return {status:error.status,message:error.message,data:null};
+            return {status:error.status || 400,message:error.message || "Something Went Wrong!",data:null};
         }
     }
 
@@ -34,7 +34,7 @@ export class SavedService {
             return response.data;
         } catch (error) {
             console.log("Error in getting saved posts " ,error);
-            return {status:error.status,message:error.message,data:null};
+            return {status:error.status || 400,message:error.message || "Something Went Wrong!",data:null};
         }
     }
 

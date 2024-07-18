@@ -25,7 +25,7 @@ export class PostService{
         return response.data;
         }catch (error) {
             console.log("Error in creating post " ,error);
-            return {status:error.status,message:error.message,data:null};
+            return {status:error.status || 400,message:error.message || "Something Went Wrong!",data:null};
         }
     }
 
@@ -48,7 +48,7 @@ export class PostService{
             return response.data;
         } catch (error) {
             console.log("Error in forking post " ,error);
-            return {status:error.status,message:error.message,data:null};
+            return {status:error.status || 400,message:error.message || "Something Went Wrong!",data:null};
         }
     }
 
@@ -74,7 +74,7 @@ export class PostService{
             return response.data;
         } catch (error) {
             console.log("Error in updating post " ,error);
-            return {status:error.status,message:error.message,data:null};
+            return {status:error.status || 400,message:error.message || "Something Went Wrong!",data:null};
         }
     }
 
@@ -94,7 +94,7 @@ export class PostService{
             return response.data;
         } catch (error) {
             console.log("Error in deleting post " ,error);
-            return {status:error.status,message:error.message,data:null};
+            return {status:error.status || 400,message:error.message || "Something Went Wrong!",data:null};
         }
     }
 
@@ -115,7 +115,7 @@ export class PostService{
             return response.data;
         } catch (error) {
             console.log("Error in getting post " ,error);
-            return {status:error.status,message:error.message,data:null};  
+            return {status:error.status || 400,message:error.message || "Something Went Wrong!",data:null};  
         }
     }
 
@@ -133,7 +133,7 @@ export class PostService{
             
         } catch (error) {
          console.log("Error in getting all posts " ,error);
-            return {status:error.status,message:error.message,data:null};
+            return {status:error.status || 400,message:error.message || "Something Went Wrong!",data:null};
         }
     }
 }

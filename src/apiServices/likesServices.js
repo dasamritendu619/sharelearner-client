@@ -18,7 +18,7 @@ export class LikesService {
             return response.data;
         } catch (error) {
             console.log('Error in toggleLikePost', error);
-            return {status:error.status, message:error.message,data:null};
+            return {status:error.status || 400,message:error.message || "Something Went Wrong!",data:null};
         }
     }
 
@@ -38,7 +38,7 @@ export class LikesService {
             return response.data;
         } catch (error) {
             console.log('Error in toggleLikeComment', error);
-            return {status:error.status, message:error.message,data:null};
+            return {status:error.status || 400,message:error.message || "Something Went Wrong!",data:null};
         }
     }
 
@@ -57,7 +57,7 @@ export class LikesService {
             return response.data;
         } catch (error) {
             console.log('Error in toggleLikeReply', error);
-            return {status:error.status, message:error.message,data:null};
+            return {status:error.status || 400,message:error.message || "Something Went Wrong!",data:null};
         }
     }
 
@@ -76,7 +76,7 @@ export class LikesService {
             return response.data;
         } catch (error) {
             console.log('Error in getProfilesWhoLikePost', error);
-            return {status:error.status, message:error.message,data:null};
+            return {status:error.status || 400,message:error.message || "Something Went Wrong!",data:null};
         }
     }
 }

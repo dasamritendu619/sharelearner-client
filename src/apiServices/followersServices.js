@@ -18,7 +18,7 @@ export class FollowersService {
             return response.data;
         } catch (error) {
             console.log('Error in getallComments', error);
-            return {status:error.status, message:error.message,data:null};
+            return {status:error.status || 400,message:error.message || "Something Went Wrong!",data:null};
         }
     }
 
@@ -37,7 +37,7 @@ export class FollowersService {
             return response.data;
         } catch (error) {
             console.log('Error in getallComments', error);
-            return {status:error.status, message:error.message,data:null};
+            return {status:error.status || 400,message:error.message || "Something Went Wrong!",data:null};
         }
     } 
 
@@ -56,7 +56,7 @@ export class FollowersService {
             return response.data;
         } catch (error) {
             console.log('Error in getallComments', error);
-            return {status:error.status, message:error.message,data:null};
+            return {status:error.status || 400,message:error.message || "Something Went Wrong!",data:null};
         }
     }
 

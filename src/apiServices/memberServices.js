@@ -23,7 +23,7 @@ export class MemberService {
             return response.data;
         } catch (error) {
             console.log("Error in toggling admin role " ,error);
-            return {status:error.status,message:error.message,data:null};
+            return {status:error.status || 400,message:error.message || "Something Went Wrong!",data:null};
         }
     
     }
@@ -48,7 +48,7 @@ export class MemberService {
             return response.data;
         } catch (error) {
             console.log("Error in adding member " ,error);
-            return {status:error.status,message:error.message,data:null};
+            return {status:error.status || 400,message:error.message || "Something Went Wrong!",data:null};
         }
     
     }
@@ -72,7 +72,7 @@ export class MemberService {
             return response.data;
         } catch (error) {
             console.log("Error in adding user using admin id " ,error);
-            return {status:error.status,message:error.message,data:null};
+            return {status:error.status || 400,message:error.message || "Something Went Wrong!",data:null};
         }
     
     }
@@ -94,7 +94,7 @@ export class MemberService {
             
         } catch (error) {
             console.log("Error in leaving group " ,error);
-            return {status:error.status,message:error.message,data:null};
+            return {status:error.status || 400,message:error.message || "Something Went Wrong!",data:null};
         }
     
     }
@@ -118,7 +118,7 @@ export class MemberService {
             return response.data;
         } catch (error) {
                 console.log("Error in removing member " ,error);
-                return {status:error.status,message:error.message,data:null};
+                return {status:error.status || 400,message:error.message || "Something Went Wrong!",data:null};
         }
     
     }

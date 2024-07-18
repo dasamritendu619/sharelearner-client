@@ -26,7 +26,7 @@ export class ReplyService {
             
         } catch (error) {
             console.log("Error in creating reply " ,error);
-            return {status:error.status,message:error.message,data:null};
+            return {status:error.status || 400,message:error.message || "Something Went Wrong!",data:null};
         }
     }
 
@@ -51,7 +51,7 @@ export class ReplyService {
             return response.data;
         } catch (error) {
             console.log("Error in updating reply " ,error);
-            return {status:error.status,message:error.message,data:null};
+            return {status:error.status || 400,message:error.message || "Something Went Wrong!",data:null};
         }
     }
 
@@ -71,7 +71,7 @@ export class ReplyService {
               return response.data;
         } catch (error) {
             console.log("Error in deleting reply " ,error);
-            return {status:error.status,message:error.message,data:null};
+            return {status:error.status || 400,message:error.message || "Something Went Wrong!",data:null};
         }
     }
 
@@ -90,7 +90,7 @@ export class ReplyService {
             return response.data;
         } catch (error) {
             console.log("Error in getting all replies " ,error);
-            return {status:error.status,message:error.message,data:null};
+            return {status:error.status || 400,message:error.message || "Something Went Wrong!",data:null};
         }
     }
 

@@ -26,7 +26,7 @@ export class GroupService {
             return response.data;
         } catch (error) {
             console.log('Error in createGroup', error);
-            return {status:error.status, message:error.message,data:null};
+            return {status:error.status || 400,message:error.message || "Something Went Wrong!",data:null};
         }
     }
 
@@ -52,7 +52,7 @@ export class GroupService {
             return response.data;
         } catch (error) {
             console.log('Error in updateGroup', error);
-            return {status:error.status, message:error.message,data:null};
+            return {status:error.status || 400,message:error.message || "Something Went Wrong!",data:null};
         }
     }
 
@@ -77,7 +77,7 @@ export class GroupService {
             return response.data;
         } catch (error) {
             console.log('Error in updateGroupIcon', error);
-            return {status:error.status, message:error.message,data:null};
+            return {status:error.status || 400,message:error.message || "Something Went Wrong!",data:null};
         }
     }
 
@@ -101,7 +101,7 @@ export class GroupService {
             return response.data;
         } catch (error) {
             console.log('Error in updateGroupBanner', error);
-            return {status:error.status, message:error.message,data:null};
+            return {status:error.status || 400,message:error.message || "Something Went Wrong!",data:null};
         }
     }
 
@@ -121,7 +121,7 @@ export class GroupService {
             return response.data;
         } catch (error) {
             console.log('Error in deleteGroup', error);
-            return {status:error.status, message:error.message,data:null};
+            return {status:error.status || 400,message:error.message || "Something Went Wrong!",data:null};
         }
     }
 }
