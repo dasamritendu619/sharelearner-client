@@ -18,6 +18,7 @@ import RTE from "./RTE"
 import { Button } from "../ui/button"
 import { postService } from "@/apiServices/postServices"
 import { useToast } from "../ui/use-toast"
+import { Progress } from "../ui/progress"
 
 export default function BlogPostForm({data}) {
     const user = useSelector(state => state.auth.user)
@@ -25,6 +26,7 @@ export default function BlogPostForm({data}) {
     const { register, handleSubmit, control } = useForm()
     const {toast} = useToast()
     const navigate = useNavigate()
+    const [uploadPercentage, setUploadPercentage] = useState(0)
 
     const onSubmit = async (data) => {
         if (!value || !data.title || !data.content) {
@@ -34,6 +36,7 @@ export default function BlogPostForm({data}) {
                 description: "Please fill all the fields to create a post.",
               })
         }
+        setUploadPercentage(55)
         const response = await postService.createPost({
             title: data.title.trim(),
             content: data.content,
@@ -53,6 +56,7 @@ export default function BlogPostForm({data}) {
                 title: "Post created successfully!",
                 description: "Your post has been created successfully.",
             })
+            setUploadPercentage(100)
             navigate(`/post/${response.data._id}`)
         }
     }
@@ -116,6 +120,19 @@ export default function BlogPostForm({data}) {
         {data? "Update Post":"Create Post"}
         </Button>
       </form>
+
+      {uploadPercentage > 0 && 
+      <div className='w-screen h-screen bg-opacity-60 dark:bg-opacity-80 bg-black fixed top-0 left-0 grid place-content-center'>
+        <div>
+          <p className='text-center text-white'>
+            {uploadPercentage} %
+          </p>
+        <Progress value={uploadPercentage} className="w-[90vw] sm:w-72 lg:w-96" />
+        <p className='text-center mt-3 text-white'>
+          Uploading...
+        </p>
+        </div>
+        </div>}
     </div>
   )
 }

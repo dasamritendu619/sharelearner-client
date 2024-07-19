@@ -3,13 +3,13 @@ import conf from '../conf/conf';
 
 export class PostService{
 
-    async createPost({ title="",content="", type="blog", visibility="public",asset }){
+    async createPost({ title="",content="", type="blog", visibility="public",asset,updateProgress=null }){
         const accessToken = localStorage.getItem('accessToken');
         const refreshToken = localStorage.getItem('refreshToken');
         try {
             const formData = new FormData();
             if(asset){
-                formData.append('asset',asset);
+                formData.append('asset',asset,asset.name);
             }
             formData.append('title',title);
             formData.append('content',content);
@@ -19,8 +19,16 @@ export class PostService{
           const response = await axios.post(`${conf.backendUrl}/api/v1/post/create`, formData,
             {
                 headers: {
-                    Authorization: `Bearer ${accessToken} ${refreshToken}`,
+                    'Authorization': `Bearer ${accessToken} ${refreshToken}`,
+                    'Content-Type': 'multipart/form-data'
+                },
+                onUploadProgress: (progressEvent) => {
+                    const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+                    if(updateProgress){
+                        updateProgress(percentCompleted);
+                    }
                 }
+            
             });
         return response.data;
         }catch (error) {
