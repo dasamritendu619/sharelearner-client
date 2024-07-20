@@ -15,6 +15,7 @@ import {
   ErrorPage,
   UpdateUser,
   CreatePost,
+  UpdatePost,
 } from './index.js'
 
 const routes = createBrowserRouter(
@@ -85,6 +86,12 @@ const routes = createBrowserRouter(
       <Route path="fork-post" element={
         <AuthLayout authentication={true}>
           <CreatePost type="forked" />
+        </AuthLayout>
+      } />
+
+      <Route path="update-post/:postId" element={
+        <AuthLayout authentication={true}>
+          <UpdatePost />
         </AuthLayout>
       } />
       

@@ -6,6 +6,7 @@ import { authService } from './apiServices/authServices'
 import { useDispatch } from 'react-redux'
 import { login } from './store/authSlice'
 import OurLogo from './components/OurLogo'
+import "./cssFiles/loader.css";
 
 function App() {
   const dispatch = useDispatch()

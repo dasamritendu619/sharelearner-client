@@ -144,6 +144,25 @@ export class PostService{
             return {status:error.status || 400,message:error.message || "Something Went Wrong!",data:null};
         }
     }
+
+    async getPostDetailsForUpdate({postId}){
+        const accessToken = localStorage.getItem('accessToken');
+        const refreshToken = localStorage.getItem('refreshToken');
+        try {
+            if(!postId){
+                throw new Error(400, "Post Id is required to get post details for update");
+            }
+            const response = await axios.get(`${conf.backendUrl}/api/v1/post/get-update/${postId}`,{
+                headers: {
+                    Authorization: `Bearer ${accessToken} ${refreshToken}`,
+                }
+            });
+            return response.data;
+        } catch (error) {
+            console.log("Error in getting post details for update " ,error);
+            return {status:error.status || 400,message:error.message || "Something Went Wrong!",data:null};
+        }
+    }
 }
 
 

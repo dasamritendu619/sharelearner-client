@@ -44,13 +44,22 @@ export default function AssetPostForm({ data, type }) {
       }) 
     }
     setUploadPercentage(1)
-    const response = await postService.createPost({
-      title: titleRef.current.value,
-      visibility: value,
-      asset: file,
-      type: type,
-      updateProgress:updateProgress
-    })
+    let response;
+    if (data) {
+      response = await postService.updatePost({
+        newTitle: titleRef.current.value,
+        newVisibility: value,
+        postId: data._id,
+      })
+    } else {
+      response = await postService.createPost({
+        title: titleRef.current.value,
+        visibility: value,
+        asset: file,
+        type: type,
+        updateProgress:updateProgress
+      })
+    }
     if (!response.data || response.status >= 400) {
       return toast({
         variant: "destructive",
@@ -74,7 +83,7 @@ export default function AssetPostForm({ data, type }) {
   return (
     <div className='w-screen h-auto bg-blue-100 dark:bg-gray-950 text-black dark:text-white'>
       <h1 className='text-center font-semibold text-xl my-5'>
-        Create Your New Post
+        {data ? "Update your post" : `Create your new Post`}
       </h1>
       <div className='flex flex-wrap md:flex-nowrap'>
         <div className='md:w-[50%] w-full flex justify-center mt-4 flex-nowrap'>

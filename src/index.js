@@ -6,6 +6,7 @@ import ResetPassword from "./page/ResetPassword";
 import ErrorPage from "./page/ErrorPage";
 import UpdateUser from "./page/UpdateUser";
 import CreatePost from "./page/CreatePost";
+import UpdatePost from "./page/UpdatePost";
 
 
 export {
@@ -17,4 +18,5 @@ export {
     ErrorPage,
     UpdateUser,
     CreatePost,
+    UpdatePost,
 }

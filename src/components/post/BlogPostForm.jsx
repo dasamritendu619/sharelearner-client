@@ -28,8 +28,8 @@ export default function BlogPostForm({data}) {
     const navigate = useNavigate()
     const [uploadPercentage, setUploadPercentage] = useState(0)
 
-    const onSubmit = async (data) => {
-        if (!value || !data.title || !data.content) {
+    const onSubmit = async (postData) => {
+        if (!value || !postData.title || !postData.content) {
             toast({
                 variant: "destructive",
                 title: "All fields are required!",
@@ -37,12 +37,22 @@ export default function BlogPostForm({data}) {
               })
         }
         setUploadPercentage(55)
-        const response = await postService.createPost({
-            title: data.title.trim(),
-            content: data.content,
+        let response;
+        if (data) {
+          response = await postService.updatePost({
+            newTitle: postData.title.trim(),
+            newContent: postData.content,
+            newVisibility: value,
+            postId: data._id,
+          })
+        } else {
+          response = await postService.createPost({
+            title: postData.title.trim(),
+            content: postData.content,
             type: 'blog',
             visibility: value,
         })
+        }
         if (!response.data || response.status >= 400) {
             toast({
                 variant: "destructive",
