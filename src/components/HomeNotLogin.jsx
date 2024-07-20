@@ -56,6 +56,7 @@ function HomeNotLogin() {
                             alt="Course img"
                             height="300"
                             width="400"
+                            loading="lazy"
                             className="object-contain"
                             />
                             <div className="px-4 sm:px-6 flex flex-col items-center text-center flex-grow">
