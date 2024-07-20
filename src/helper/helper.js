@@ -66,4 +66,48 @@ function isValidUsername(inputString) {
     return true;
 }
 
-export { isStrongPassword, validateEmail, isValidUsername };
+const technologyUsed = [{
+    id:1,
+    title:"MongoDB",
+    description:"A document-oriented NoSQL database used for high volume data storage.",
+    image:"1721191066317.jpeg",
+    slug:"https://www.mongodb.com"
+},
+{
+    id:2,
+    title:"Express",
+    description:"A fast, unopinionated, minimalist web framework for Node.js.",
+    image:"1_t40l2rOzSEXZbvGWClW-Pw.jpg",
+    slug:"https://expressjs.com"
+},
+{
+    id:3,
+    title:"React",
+    description:"A JavaScript library for building user interfaces.",
+    image:"1_7VFewln8nrykeF7kQyXwLg.jpg",
+    slug:"https://react.dev"
+},
+{
+    id:4,
+    title:"Node.js",
+    description:"A JavaScript runtime built on Chrome's V8 JavaScript engine.",
+    image:"1_wHKmHfVWNwSO1v4uJR8U7w.jpg",
+    slug:"https://nodejs.org"
+},
+{
+    id:5,
+    title:"Shadcn UI",
+    description:"A component library for React and Next.js applications.",
+    image:"cover.png",
+    slug:"https://ui.shadcn.com/"
+},
+{
+    id:6,
+    title:"Amazon Web Services",
+    description:"A subsidiary of Amazon providing on-demand cloud computing platforms and APIs.",
+    image:"/Aws Elemental Perfecting The Media Experience.jpg",
+    slug:"https://aws.amazon.com"
+}
+]
+
+export { isStrongPassword, validateEmail, isValidUsername,technologyUsed };

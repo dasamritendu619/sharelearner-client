@@ -7,6 +7,7 @@ import { Provider } from 'react-redux'
 import { Route, RouterProvider, createBrowserRouter, createRoutesFromElements } from 'react-router-dom';
 import AuthLayout from './components/AuthLayout.jsx'
 import {
+  Home,
   Login,
   Signup,
   VeryfyUser,
@@ -21,6 +22,8 @@ import {
 const routes = createBrowserRouter(
   createRoutesFromElements(
     <Route path="/" element={<App />} errorElement={<ErrorPage />} >
+
+      <Route path="" element={<Home />} />
 
       <Route path="login" element={
         <AuthLayout authentication={false}>
