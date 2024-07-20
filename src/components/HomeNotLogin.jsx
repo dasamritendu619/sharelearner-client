@@ -4,8 +4,40 @@ import { Button } from "./ui/moving-border";
 import { BackgroundBeams } from "./ui/background-beams";
 import { BackgroundGradient } from "./ui/background-gradient"
 import {technologyUsed} from "../helper/helper"
+import { WavyBackground } from "./ui/wavy-background"
+import { AnimatedTooltip } from "./ui/animated-tooltip";
 
 function HomeNotLogin() {
+    const instructors = [
+        {
+          id: 1,
+          name: 'Kuntal Maity',
+          designation: 'Team Leader',
+          image:
+            '/Kuntal-min.jpg',
+        },
+        {
+          id: 2,
+          name: 'Shuvadip Dian',
+          designation: 'Team Member',
+          image:
+            '/Dian-min.jpg',
+        },
+        {
+          id: 3,
+          name: 'Sayan Maity',
+          designation: 'Team Member',
+          image:
+            '/Sayan-min.jpg',
+        },
+        {
+          id: 4,
+          name: 'Amritendu Das',
+          designation: 'Team Member',
+          image:
+            '/Tendu-min.jpg',
+        },
+      ];
   return (
     <>
     <div
@@ -73,6 +105,21 @@ function HomeNotLogin() {
             </div>
         </div>
     </div>
+
+
+    <div className="relative h-[40rem] overflow-hidden flex items-center justify-center">
+        <WavyBackground className="w-full max-w-7xl mx-auto flex flex-col items-center justify-center h-full">
+            <h2 className="text-2xl md:text-4xl lg:text-7xl text-white font-bold text-center mb-8">Meet Our Contributers</h2>
+            <p className="text-base md:text-lg text-white text-center mb-4">Discover the talented professionals who will guide your development journey</p>
+            <div className="flex flex-row items-center justify-center mb-10 w-full">
+                <AnimatedTooltip items={instructors} />
+            </div>
+        </WavyBackground>
+    </div>
+
+
+
+    
     </>
   )
 }
