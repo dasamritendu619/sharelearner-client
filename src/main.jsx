@@ -17,6 +17,7 @@ import {
   UpdateUser,
   CreatePost,
   UpdatePost,
+  PostPage,
 } from './index.js'
 
 const routes = createBrowserRouter(
@@ -97,6 +98,8 @@ const routes = createBrowserRouter(
           <UpdatePost />
         </AuthLayout>
       } />
+
+      <Route path="post/:postId" element={<PostPage />} />
       
     </Route>,
   )

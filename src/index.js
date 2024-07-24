@@ -8,6 +8,7 @@ import UpdateUser from "./page/UpdateUser";
 import CreatePost from "./page/CreatePost";
 import UpdatePost from "./page/UpdatePost";
 import Home from "./page/Home";
+import PostPage from "./page/PostPage";
 
 
 export {
@@ -21,4 +22,5 @@ export {
     CreatePost,
     UpdatePost,
     Home,
+    PostPage,
 }
