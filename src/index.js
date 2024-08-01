@@ -9,6 +9,7 @@ import CreatePost from "./page/CreatePost";
 import UpdatePost from "./page/UpdatePost";
 import Home from "./page/Home";
 import PostPage from "./page/PostPage";
+import ForkPost from "./page/ForkPost";
 
 
 export {
@@ -23,4 +24,5 @@ export {
     UpdatePost,
     Home,
     PostPage,
+    ForkPost,
 }

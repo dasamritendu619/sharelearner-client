@@ -4,23 +4,13 @@ import { useSelector, useDispatch } from 'react-redux'
 import { useEffect, useState, useRef } from 'react'
 import { postService } from '@/apiServices/postServices'
 import parse from 'html-react-parser'
-import { ChevronDown, Copy, MessageSquareMore, Save, Share, Share2, Star, UserRoundPlus, UserRoundX } from 'lucide-react'
+import { ChevronDown, MessageSquareMore, Save, Star, UserRoundPlus, UserRoundX } from 'lucide-react'
 import { likesService } from '@/apiServices/likesServices'
 import { followersService } from '@/apiServices/followersServices'
 import { savedService } from '@/apiServices/savedServices'
 import { Skeleton } from "@/components/ui/skeleton"
 import CommentCard from '@/components/post/CommentCard'
-import {
-  AlertDialog,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog"
-import { Input } from '@/components/ui/input'
+import SharePost from '@/components/post/SharePost'
 import { useToast } from '@/components/ui/use-toast'
 import { viewPost, updateViewedPost } from '@/store/postSlice'
 import { Button } from '@/components/ui/moving-border'
@@ -149,7 +139,7 @@ export default function PostPage() {
   const getComments = async (page)=>{
     const limit = 20;
     const response = await commentService.getallComments({postId,page,limit})
-    console.log(response)
+    // console.log(response)
     if (response.status<400 && response.data) {
         setCommentResData(response.data)
         if (page === 1) {
@@ -177,7 +167,7 @@ useEffect(()=>{
     <>
       {
         post ?
-          <div className='w-screen h-screen overflow-auto lg:flex lg:flex-nowrap lg:justify-center fixed top-0 left-0'>
+          <div className='w-screen h-screen bg-blue-100 dark:bg-gray-950 overflow-auto lg:flex lg:flex-nowrap lg:justify-center fixed top-0 left-0'>
             <div className='w-full lg:w-[65%] lg:pr-4'>
               <div>
 
@@ -196,7 +186,7 @@ useEffect(()=>{
                         @{post.author.username}
                       </Link>
                     </p>
-                    <button onClick={toggleFollow}
+                    <button onClick={toggleFollow} disabled={user._id === post.author._id}
                       className={`flex-center ml-3 px-3 h-8 rounded-full leading-3 ${!post.author.isFollowedByMe && "bg-green-500"}`}>
                       {
                         !post.author.isFollowedByMe ? <>
@@ -216,30 +206,30 @@ useEffect(()=>{
                     </p>
                   </div>
                   {
-                    post.type === 'blog' &&
+                    (post.type === 'blog' || post.forkedFrom[0]?.type === 'blog') &&
                     <div className='px-2 sm:px-3 lg:px-4 py-2'>
-                      {parse(post.content)}
+                      {parse(post.type !== "forked" ? post.content : post.forkedFrom[0].content)}
                     </div>
                   }
 
                   {
-                    post.type === 'photo' &&
+                    (post.type === 'photo' || post.forkedFrom[0]?.type === 'photo') &&
                     <div className='px-2 sm:px-3 lg:px-4 py-2'>
-                      <img src={post.assetURL} alt="post photo" className='mx-auto viewing-asset' />
+                      <img src={post.type !== "forked" ? post.assetURL : post.forkedFrom[0].assetURL} alt="post photo" className='mx-auto viewing-asset' />
                     </div>
                   }
 
                   {
-                    post.type === 'pdf' &&
+                    (post.type === 'pdf' || post.forkedFrom[0]?.type === 'pdf') &&
                     <div className='px-2 sm:px-3 lg:px-4 py-2'>
-                      <iframe src={post.assetURL} width="100%" height="600px"></iframe>
+                      <iframe src={post.type !== "forked" ? post.assetURL : post.forkedFrom[0].assetURL} width="100%" height="600px"></iframe>
                     </div>
                   }
 
                   {
-                    post.type === 'video' &&
+                    (post.type === 'video' || post.forkedFrom[0]?.type === 'video') &&
                     <div className='px-2 sm:px-3 lg:px-4 py-2'>
-                      <video src={post.assetURL} controls className='mx-auto viewing-asset' ></video>
+                      <video src={post.type !== "forked" ? post.assetURL : post.forkedFrom[0].assetURL} controls className='mx-auto viewing-asset' ></video>
                     </div>
                   }
                 </div>
@@ -270,47 +260,7 @@ useEffect(()=>{
                   </button>
                 </div>
 
-                <div className='flex flex-col mx-[2px] lg:mx-1'>
-                  <AlertDialog>
-                    <AlertDialogTrigger asChild>
-                      <button className='post-btn'>
-                        <Share2 size={20} /> <span className='pl-1 text-[12px]'>Share</span>
-                      </button>
-                    </AlertDialogTrigger>
-                    <AlertDialogContent>
-                      <AlertDialogHeader>
-                        <AlertDialogTitle>Share {post.author.fullName}'s Post</AlertDialogTitle>
-                        <AlertDialogDescription>
-                          <div className='flex flex-nowrap justify-center'>
-                            <Input type="text" value={window.location.href} readOnly className="border-r-0" />
-                            <button className=" border border-l-0 rounded-md pr-2"
-                              onClick={() => {
-                                navigator.clipboard.writeText(window.location.href);
-                                toast({
-                                  title: "Link Copied to Clipboard!",
-                                  className: "bg-green-500",
-                                });
-                              }}
-                            >
-                              <Copy size={20} />
-                            </button>
-                          </div>
-                          <Link to={`/fork-post/${post._id}`}
-                            className='flex-center my-5 text-[18px] text-blue-500'
-                          >
-                            <Share size={20} /> <span className='pl-1 text-[12px]'>Share on your feed</span>
-                          </Link>
-                        </AlertDialogDescription>
-                      </AlertDialogHeader>
-                      <AlertDialogFooter>
-                        <AlertDialogCancel>Cancel</AlertDialogCancel>
-                      </AlertDialogFooter>
-                    </AlertDialogContent>
-                  </AlertDialog>
-                  <button disabled className='text-[12px] text-gray-600 mt-1 dark:text-gray-400'>
-                    {post.sharesCount} Shares
-                  </button>
-                </div>
+                <SharePost post={post} />
 
                 <div className='flex flex-col mx-[2px] lg:mx-1'>
                   <button className='post-btn' onClick={toggleSave}>
@@ -401,7 +351,7 @@ useEffect(()=>{
               }
             </div>
           </div> :
-          <div className='w-screen h-screen grid place-content-center'>
+          <div className='w-screen h-screen fixed top-0 left-0 bg-blue-100 dark:bg-gray-950 grid place-content-center'>
             <div className="loader3"></div>
           </div>
       }

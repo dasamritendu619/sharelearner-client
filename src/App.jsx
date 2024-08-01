@@ -7,6 +7,7 @@ import { useDispatch } from 'react-redux'
 import { login } from './store/authSlice'
 import OurLogo from './components/OurLogo'
 import "./cssFiles/loader.css";
+import Hearer from './components/Hearer'
 
 function App() {
   const dispatch = useDispatch()
@@ -33,10 +34,11 @@ function App() {
   }, [])
 
   return (
-    <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
+    <ThemeProvider defaultTheme="syatem" storageKey="vite-ui-theme">
     {
       loading ? <OurLogo/> : 
-        <div>
+      <div className='m-0 p-0'>
+      <Hearer  />
       <Outlet />
       <Toaster />
     </div>

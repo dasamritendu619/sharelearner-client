@@ -18,6 +18,7 @@ import {
   CreatePost,
   UpdatePost,
   PostPage,
+  ForkPost,
 } from './index.js'
 
 const routes = createBrowserRouter(
@@ -29,6 +30,12 @@ const routes = createBrowserRouter(
       <Route path="login" element={
         <AuthLayout authentication={false}>
           <Login />
+        </AuthLayout>
+      } />
+
+      <Route path='fork-post/:postId' element={
+        <AuthLayout authentication={true}>
+          <ForkPost />
         </AuthLayout>
       } />
 

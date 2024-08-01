@@ -37,7 +37,7 @@ export class PostService{
         }
     }
 
-    async forkPosts( postId,visibility="public",title="" ){
+    async forkPosts( {postId,visibility="public",title=""} ){
         const accessToken = localStorage.getItem('accessToken');
         const refreshToken = localStorage.getItem('refreshToken');
         try {
