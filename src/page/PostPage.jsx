@@ -1,13 +1,15 @@
 import React from 'react'
 import { useParams, Link, useNavigate } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { postService } from '@/apiServices/postServices'
 import parse from 'html-react-parser'
-import { Copy, MessageSquareMore, Save, Share, Share2, Star, UserRoundPlus, UserRoundX } from 'lucide-react'
+import { ChevronDown, Copy, MessageSquareMore, Save, Share, Share2, Star, UserRoundPlus, UserRoundX } from 'lucide-react'
 import { likesService } from '@/apiServices/likesServices'
 import { followersService } from '@/apiServices/followersServices'
 import { savedService } from '@/apiServices/savedServices'
+import { Skeleton } from "@/components/ui/skeleton"
+import CommentCard from '@/components/post/CommentCard'
 import {
   AlertDialog,
   AlertDialogCancel,
@@ -21,6 +23,9 @@ import {
 import { Input } from '@/components/ui/input'
 import { useToast } from '@/components/ui/use-toast'
 import { viewPost, updateViewedPost } from '@/store/postSlice'
+import { Button } from '@/components/ui/moving-border'
+import { Button as Btn } from '@/components/ui/button'
+import { commentService } from '@/apiServices/commentServices'
 
 export default function PostPage() {
   const { postId } = useParams();
@@ -30,8 +35,14 @@ export default function PostPage() {
   const { toast } = useToast();
   const dispatch = useDispatch();
   const viewedPosts = useSelector((state) => state.post.viewedPosts);
+  const textAreaRef = useRef(null);
+  const [commentInputVal, setCommentInputVal] = useState('');
+  const [comments,setComments] = useState([])
+  const [commentResData,setCommentResData] = useState(null)
+  const skeletons = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+  const [page,setPage] = useState(1)
 
-  const isPostViewed = ()=>{
+  const isPostViewed = () => {
     for (let i = 0; i < viewedPosts.length; i++) {
       if (viewedPosts[i]._id === postId) {
         return viewedPosts[i];
@@ -70,6 +81,44 @@ export default function PostPage() {
     await savedService.toggleSavedPost({ postId });
   }
 
+  const addComment = async () => {
+    if (!user) {
+      navigate('/login');
+      return;
+    }
+    if (!commentInputVal.trim()) return;
+    const responce = await commentService.createComment({postId,content:commentInputVal.trim()})
+    if (responce.status < 400 && responce.data) {
+      console.log(responce.data)
+      const newComment = {
+        ...responce.data,
+        commentedBy:{
+          _id:user._id,
+          username:user.username,
+          fullName:user.fullName,
+          avatar:user.avatar
+        },
+        totalReplies:0,
+        totalLikes:0,
+        isLikedByMe:false
+      }
+      setComments([newComment,...comments])
+      setPost({ ...post, commentsCount: post.commentsCount + 1 })
+      setCommentInputVal('')
+    } else {
+      toast({
+        title: "Failed to add comment",
+        description: responce.message,
+        variant: "destructive",
+      });
+    }
+  }
+
+  const updateTotalCommentSCount = (number)=>{
+    setPost({...post,commentsCount:post.commentsCount+number})
+    dispatch(updateViewedPost({...post,commentsCount:post.commentsCount+number}))
+  }
+
   useEffect(() => {
     if (!postId) navigate('/');
     const viewedPost = isPostViewed();
@@ -80,7 +129,7 @@ export default function PostPage() {
         if (res.data && res.status < 400) {
           setPost(res.data);
           dispatch(viewPost(res.data));
-          console.log(res.data)
+          // console.log(res.data)
         } else {
           navigate('/');
         }
@@ -88,19 +137,55 @@ export default function PostPage() {
     }
   }, [postId]);
 
+
+  const resizeTextArea = () => {
+    if (textAreaRef.current === null) return;
+    textAreaRef.current.style.height = "auto";
+    textAreaRef.current.style.height = textAreaRef.current.scrollHeight + "px";
+  };
+
+  useEffect(resizeTextArea, [commentInputVal]);
+
+  const getComments = async (page)=>{
+    const limit = 20;
+    const response = await commentService.getallComments({postId,page,limit})
+    console.log(response)
+    if (response.status<400 && response.data) {
+        setCommentResData(response.data)
+        if (page === 1) {
+            setComments(response.data.docs)
+        }else {
+            setComments([...comments,...response.data.docs])
+        }
+        setPage(page)
+    } else {
+        toast({
+            title: "Failed to get comments",
+            description: response.message,
+            variant: "destructive",
+        })
+    }
+}
+
+useEffect(()=>{
+    if (user) {
+        getComments(1)
+    }
+},[postId])
+
   return (
     <>
       {
         post ?
-          <div className='w-screen h-screen overflow-auto md:flex md:flex-nowrap md:justify-center fixed top-0 left-0'>
-            <div className='w-full md:w-[65%] md:pr-4'>
+          <div className='w-screen h-screen overflow-auto lg:flex lg:flex-nowrap lg:justify-center fixed top-0 left-0'>
+            <div className='w-full lg:w-[65%] lg:pr-4'>
               <div>
 
                 <div>
                   <div className='flex justify-start border-gray-600 mt-2 flex-nowrap px-3 pt-2 border border-b-0 mx-4'>
                     <Link to={`/user/${post.author.username}`}>
                       <img src={post.author.avatar.replace("upload/", "upload/w_70/")} alt='avatar'
-                        className='rounded-full w-10 md:w-14' />
+                        className='rounded-full w-10 lg:w-14' />
                     </Link>
                     <p className='ml-2'>
                       <Link to={`/user/${post.author.username}`} className='text-[16px] leading-3 mt-1 font-semibold block'>
@@ -126,42 +211,42 @@ export default function PostPage() {
                     <p className=' leading-3 text-[11px] text-gray-500'>
                       {new Date(post.createdAt).toDateString()}
                     </p>
-                    <p className='font-semibold leading-5 text-[14px] md:text-[16px]'>
+                    <p className='font-semibold leading-5 text-[14px] lg:text-[16px]'>
                       {post.title}
                     </p>
                   </div>
                   {
                     post.type === 'blog' &&
-                    <div className='px-2 sm:px-3 md:px-4 py-2'>
+                    <div className='px-2 sm:px-3 lg:px-4 py-2'>
                       {parse(post.content)}
                     </div>
                   }
 
                   {
                     post.type === 'photo' &&
-                    <div className='px-2 sm:px-3 md:px-4 py-2'>
-                      <img src={post.assetURL} alt="post photo" className='mx-auto' />
+                    <div className='px-2 sm:px-3 lg:px-4 py-2'>
+                      <img src={post.assetURL} alt="post photo" className='mx-auto viewing-asset' />
                     </div>
                   }
 
                   {
                     post.type === 'pdf' &&
-                    <div className='px-2 sm:px-3 md:px-4 py-2'>
+                    <div className='px-2 sm:px-3 lg:px-4 py-2'>
                       <iframe src={post.assetURL} width="100%" height="600px"></iframe>
                     </div>
                   }
 
                   {
                     post.type === 'video' &&
-                    <div className='px-2 sm:px-3 md:px-4 py-2'>
-                      <video src={post.assetURL} controls className='mx-auto' ></video>
+                    <div className='px-2 sm:px-3 lg:px-4 py-2'>
+                      <video src={post.assetURL} controls className='mx-auto viewing-asset' ></video>
                     </div>
                   }
                 </div>
               </div>
             </div>
-            <div className='w-full md:w-[35%]'>
-              <div className='flex-center mt-4 md:mt-8'>
+            <div className='w-full lg:w-[35%]'>
+              <div className='flex-center mt-4 lg:mt-8'>
                 <div className='flex flex-col mx-[2px] lg:mx-1'>
                   <button className='post-btn' onClick={toggleLike}>
                     {
@@ -177,10 +262,10 @@ export default function PostPage() {
                 </div>
 
                 <div className='flex flex-col mx-[2px] lg:mx-1'>
-                  <button className='post-btn'>
+                  <button className='post-btn' onClick={()=>textAreaRef.current.focus()}>
                     <MessageSquareMore size={20} /> <span className='pl-1 text-[12px]'>Comment</span>
                   </button>
-                  <button className='text-[12px] text-gray-600 mt-1 dark:text-gray-400'>
+                  <button disabled className='text-[12px] text-gray-600 mt-1 dark:text-gray-400'>
                     {post.commentsCount} Comments
                   </button>
                 </div>
@@ -197,23 +282,23 @@ export default function PostPage() {
                         <AlertDialogTitle>Share {post.author.fullName}'s Post</AlertDialogTitle>
                         <AlertDialogDescription>
                           <div className='flex flex-nowrap justify-center'>
-                          <Input type="text" value={window.location.href} readOnly className="border-r-0" />
-                          <button className=" border border-l-0 rounded-md pr-2"
-                          onClick={() => {
-                            navigator.clipboard.writeText(window.location.href);
-                            toast({
-                              title: "Link Copied to Clipboard!",
-                              className: "bg-green-500",
-                            });
-                          }}
-                          >
-                          <Copy size={20} />
-                          </button>
+                            <Input type="text" value={window.location.href} readOnly className="border-r-0" />
+                            <button className=" border border-l-0 rounded-md pr-2"
+                              onClick={() => {
+                                navigator.clipboard.writeText(window.location.href);
+                                toast({
+                                  title: "Link Copied to Clipboard!",
+                                  className: "bg-green-500",
+                                });
+                              }}
+                            >
+                              <Copy size={20} />
+                            </button>
                           </div>
                           <Link to={`/fork-post/${post._id}`}
-                          className='flex-center my-5 text-[18px] text-blue-500'
+                            className='flex-center my-5 text-[18px] text-blue-500'
                           >
-                          <Share size={20} /> <span className='pl-1 text-[12px]'>Share on your feed</span>
+                            <Share size={20} /> <span className='pl-1 text-[12px]'>Share on your feed</span>
                           </Link>
                         </AlertDialogDescription>
                       </AlertDialogHeader>
@@ -222,7 +307,7 @@ export default function PostPage() {
                       </AlertDialogFooter>
                     </AlertDialogContent>
                   </AlertDialog>
-                  <button className='text-[12px] text-gray-600 mt-1 dark:text-gray-400'>
+                  <button disabled className='text-[12px] text-gray-600 mt-1 dark:text-gray-400'>
                     {post.sharesCount} Shares
                   </button>
                 </div>
@@ -235,11 +320,85 @@ export default function PostPage() {
                       </>
                     }
                   </button>
-                  <button className='text-[12px] text-gray-600 mt-1 dark:text-gray-400'>
+                  <button disabled className='text-[12px] text-gray-600 mt-1 dark:text-gray-400'>
                     {post.savedCount} Saves
                   </button>
                 </div>
               </div>
+
+              {
+                user ?
+                  <div className='px-2 xl:px-0 border-t mt-4 pb-8'>
+                    <h2 className=' text-[16px] font-semibold flex flex-nowrap my-2 ml-2 sm:ml-8 md:ml-12'>
+                      <span>Comments</span> <ChevronDown className='mt-1 ml-1' />
+                    </h2>
+
+                    {/* Comment Section */}
+                     
+                        <div className=' sm:px-8 md:px-12'>
+                          <div className='w-full flex flex-nowrap justify-start'>
+                            <img src={user.avatar.replace("upload/", "upload/ar_1.0,g_face,c_fill,w_40/")} alt="avatar" className='w-10 h-10 rounded-full' />
+                            <div className='flex flex-col w-[90%] ml-2'>
+
+                              <textarea
+                                ref={textAreaRef}
+                                value={commentInputVal}
+                                onChange={(e) => setCommentInputVal(e.target.value)}
+                                placeholder='Add a comment...'
+                                className='text-[12px] border-b-[1px] border-b-gray-400 outline-none mb-1 overflow-y-hidden resize-none bg-transparent'
+                                cols="30" rows="2"></textarea>
+
+                              <div className='flex flex-nowrap justify-end'>
+                                <button  disabled={!commentInputVal.trim()} onClick={addComment}
+                                  className={`${!commentInputVal.trim() ? "bg-gray-700" : "bg-blue-600 hover:bg-blue-500"} text-white px-2 py-1 rounded-full text-[11px]`}
+                                >Comment</button>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
+                    {
+                      !commentResData ? skeletons.map((i)=>{
+                        return <div className="flex items-center space-x-4 my-3 sm:pl-8 md:pl-12" key={i}>
+                        <Skeleton className="h-12 w-12 rounded-full" />
+                        <div className="space-y-2">
+                          <Skeleton className="h-4 w-[250px] sm:w-[450px] lg:w-[200px] xl:w-[250px]" />
+                          <Skeleton className="h-4 w-[200px] sm:w-[400px] lg:w-[150px] xl:w-[200px]" />
+                        </div>
+                      </div>
+                      }) : <div className=' md:px-6'>
+                        {
+                          comments.map((comment,index)=>{
+                            return <CommentCard 
+                            key={comment._id} 
+                            comment={comment} 
+                            postId={postId} 
+                            setComments={setComments} 
+                            index={index}
+                            updateTotalCommentSCount={updateTotalCommentSCount} />
+                          })
+                        }
+                        
+                          {
+                            commentResData.page < commentResData.totalPages && <div className='flex-center my-5'>
+                              <Btn onClick={()=>getComments(page+1)}>Load more comments</Btn>
+                            </div>
+                          }
+                        
+                      </div>
+                    }
+                    
+                  </div> : <div className='text-center px-4 pt-2 pb-8'>
+                    <div className='flex-center mt-6 lg:mt-10 mb-2'>
+                      <Button>
+                        <Link to="/login" className=''>
+                          Login now
+                        </Link>
+                      </Button>
+                    </div>
+                    Please login to like, comment, share and save posts.
+                  </div>
+              }
             </div>
           </div> :
           <div className='w-screen h-screen grid place-content-center'>

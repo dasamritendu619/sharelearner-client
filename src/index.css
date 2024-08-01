@@ -83,3 +83,29 @@
     @apply flex-center border-x-[1px] dark:border-white border-black border-y-[1px] rounded-full px-3 py-1 hover:bg-gray-300 dark:hover:bg-gray-700;
   }
 
+  .viewing-asset{
+    max-height: calc(100vh - 120px);
+  }
+
+  .hoverableEle{
+    position: relative;
+  }
+  
+  .hoverableEle:hover .showingEle{
+    display: block;
+  }
+  
+  .normHoverableEle:hover .normShowingEle{
+    display: block;
+    visibility: visible;
+  }
+  
+  .normShowingEle{
+    visibility: hidden;
+  }
+  
+  .showingEle{
+    position: absolute;
+    display: none;
+    z-index: 30;
+  }
