@@ -61,14 +61,14 @@ export class LikesService {
         }
     }
 
-    async getProfilesWhoLikePost({postId}) {
+    async getProfilesWhoLikePost({postId,page=1,limit=20}) {
         const accessToken = localStorage.getItem('accessToken');
         const refreshToken = localStorage.getItem('refreshToken');
         try {
             if (!postId) {
                 throw new Error("Post id is required");
             }
-            const response = await axios.get(`${conf.backendUrl}/api/v1/likes/profiles/${postId}`,{
+            const response = await axios.get(`${conf.backendUrl}/api/v1/likes/profiles/${postId}?page=${page}&limit=${limit}`,{
                 headers: {
                     Authorization: `Bearer ${accessToken} ${refreshToken}`
                 }
