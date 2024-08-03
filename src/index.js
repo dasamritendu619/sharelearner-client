@@ -9,8 +9,16 @@ import CreatePost from "./page/CreatePost";
 import UpdatePost from "./page/UpdatePost";
 import Home from "./page/Home";
 import PostPage from "./page/PostPage";
-import ForkPost from "./page/ForkPost";
-
+import SupportPage from "./page/SupportPage";
+import TermsPage from "./page/TermsPage";
+import FeedbackPage from "./page/FeedbackPage";
+import ProfilePage from "./page/ProfilePage";
+import Chat from "./page/Chat";
+import AboutUs from "./page/AboutUs";
+import SearchPage from "./page/SearchPage";
+import ProfilesPage from "./page/ProfilesPage";
+import BlogsPage from "./page/BlogsPage";
+import VideosPage from "./page/VideosPage";
 
 export {
     Login,
@@ -24,5 +32,14 @@ export {
     UpdatePost,
     Home,
     PostPage,
-    ForkPost,
+    AboutUs,
+    SupportPage, // under construction
+    TermsPage, // under construction
+    FeedbackPage, // under construction
+    ProfilePage, // under construction
+    Chat, // under construction
+    SearchPage, // under construction
+    ProfilesPage, // under construction
+    BlogsPage, // under construction
+    VideosPage, // under construction
 }

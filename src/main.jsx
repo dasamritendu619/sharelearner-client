@@ -18,7 +18,16 @@ import {
   CreatePost,
   UpdatePost,
   PostPage,
-  ForkPost,
+  AboutUs,
+  SupportPage,
+  TermsPage,
+  FeedbackPage,
+  ProfilePage,
+  Chat,
+  SearchPage,
+  ProfilesPage,
+  BlogsPage,
+  VideosPage,
 } from './index.js'
 
 const routes = createBrowserRouter(
@@ -27,15 +36,33 @@ const routes = createBrowserRouter(
 
       <Route path="" element={<Home />} />
 
-      <Route path="login" element={
-        <AuthLayout authentication={false}>
-          <Login />
+      <Route path="support" element={<SupportPage />} />
+
+      <Route path="terms" element={<TermsPage />} />
+
+      <Route path='about-us' element={<AboutUs />} />
+
+      <Route path="feedback" element={<FeedbackPage />} />
+
+      <Route path="user/:username" element={<ProfilePage />} />
+
+      <Route path="search" element={<SearchPage />} />
+
+      <Route path="profiles" element={<ProfilesPage />} />
+
+      <Route path="blogs" element={<BlogsPage />} />
+
+      <Route path="videos" element={<VideosPage />} />
+
+      <Route path="chat" element={
+        <AuthLayout authentication={true}>
+          <Chat />
         </AuthLayout>
       } />
 
-      <Route path='fork-post/:postId' element={
-        <AuthLayout authentication={true}>
-          <ForkPost />
+      <Route path="login" element={
+        <AuthLayout authentication={false}>
+          <Login />
         </AuthLayout>
       } />
 

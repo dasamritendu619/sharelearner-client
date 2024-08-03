@@ -56,7 +56,7 @@ export  default function SentForgotPasswordEmail() {
   }
 
   return (
-    <div className="w-screen h-screen grid place-content-center bg-blue-100 dark:bg-gray-950">
+    <div className="w-screen h-screen fixed top-0 left-0 grid place-content-center bg-blue-100 dark:bg-gray-950">
       <Card className="w-full max-w-sm">
       <CardHeader>
         <CardTitle className="text-2xl">Forgot Your Password ?</CardTitle>

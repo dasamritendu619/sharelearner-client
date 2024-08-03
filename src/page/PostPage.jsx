@@ -4,7 +4,7 @@ import { useSelector, useDispatch } from 'react-redux'
 import { useEffect, useState, useRef } from 'react'
 import { postService } from '@/apiServices/postServices'
 import parse from 'html-react-parser'
-import { ChevronDown, MessageSquareMore, Save, Star, UserRoundPlus } from 'lucide-react'
+import { ChevronDown, MessageCircle, MessageSquareMore, Save, Star, UserRoundPlus, House } from 'lucide-react'
 import { likesService } from '@/apiServices/likesServices'
 import { followersService } from '@/apiServices/followersServices'
 import { savedService } from '@/apiServices/savedServices'
@@ -17,6 +17,8 @@ import { Button } from '@/components/ui/moving-border'
 import { Button as Btn } from '@/components/ui/button'
 import { commentService } from '@/apiServices/commentServices'
 import ProfileCard from '@/components/ProfileCard'
+import ProfileBtn from '@/components/auth/ProfileBtn'
+import { ModeToggle } from '@/components/mode-toggle'
 import {
   Sheet,
   SheetContent,
@@ -269,7 +271,30 @@ export default function PostPage() {
               </div>
             </div>
             <div className='w-full lg:w-[35%]'>
-              <div className='flex-center mt-4 lg:mt-8'>
+              <div className='hidden lg:flex lg:flex-nowrap lg:justify-end'>
+              <Btn onClick={() => navigate('/login')}
+                variant="outline" size="icon" className='my-2 mx-[3px] rounded-full bg-white dark:bg-gray-700 font-bold'>
+                  <House size={20} />
+                  </Btn>
+                <Btn onClick={()=>{
+                  if (user) {
+                    navigate('/chat')
+                  } else {
+                    navigate('/login')
+                  }
+                }}
+                variant="outline" size="icon" className='my-2 mx-[3px] rounded-full bg-white dark:bg-gray-700 font-bold'>
+                <MessageCircle size={20} />
+                </Btn>
+                <ModeToggle />
+                {user ? <ProfileBtn /> : 
+                <Btn onClick={() => navigate('/login')}
+                variant="outline" size="icon" 
+                className='my-2 ml-[3px] mr-2 xl:mr-12 rounded-full w-20 bg-white dark:bg-gray-700 font-bold'>
+                  Login
+                  </Btn>}
+              </div>
+              <div className='flex-center mt-4'>
                 <div className='flex flex-col mx-[2px] lg:mx-1'>
                   <button className='post-btn' onClick={toggleLike}>
                     {
@@ -336,7 +361,7 @@ export default function PostPage() {
                 </div>
 
                 <div className='flex flex-col mx-[2px] lg:mx-1'>
-                  <button className='post-btn' onClick={() => textAreaRef.current.focus()}>
+                  <button className='post-btn' onClick={() => textAreaRef.current?.focus()}>
                     <MessageSquareMore size={20} /> <span className='pl-1 text-[12px]'>Comment</span>
                   </button>
                   <button disabled className='text-[12px] text-gray-600 mt-1 dark:text-gray-400'>

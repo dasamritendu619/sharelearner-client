@@ -63,7 +63,7 @@ export default function InputOTPControlled() {
     }, [identifier])
 
     return (
-        <div className="h-screen w-screen grid place-content-center bg-blue-100 dark:bg-gray-950">
+        <div className="h-screen w-screen fixed top-0 left-0 grid place-content-center bg-blue-100 dark:bg-gray-950">
             <div className="bg-gray-100 dark:bg-gray-950 p-4 md:p-8 rounded-xl">
                 <h2 className="text-center mb-8 text-black dark:text-white text-2xl font-bold">
                     Verify Your Identity</h2>

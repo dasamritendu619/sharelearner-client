@@ -8,18 +8,25 @@ import ReplyCard from './ReplyCard'
 import { Skeleton } from '../ui/skeleton'
 import { EllipsisVertical, Pencil, Star, Trash2 } from 'lucide-react'
 import { useToast } from '../ui/use-toast'
+// import {
+//     AlertDialog,
+//     AlertDialogAction,
+//     AlertDialogCancel,
+//     AlertDialogContent,
+//     AlertDialogDescription,
+//     AlertDialogFooter,
+//     AlertDialogHeader,
+//     AlertDialogTitle,
+//     AlertDialogTrigger,
+// } from "@/components/ui/alert-dialog"
 import {
-    AlertDialog,
-    AlertDialogAction,
-    AlertDialogCancel,
-    AlertDialogContent,
-    AlertDialogDescription,
-    AlertDialogFooter,
-    AlertDialogHeader,
-    AlertDialogTitle,
-    AlertDialogTrigger,
-} from "@/components/ui/alert-dialog"
-import { Button } from "@/components/ui/button"
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 
 export default memo(function CommentCard({ comment, setComments, index, updateTotalCommentSCount }) {
     const [commentInputVal, setCommentInputVal] = useState("")
@@ -37,6 +44,8 @@ export default memo(function CommentCard({ comment, setComments, index, updateTo
     const skeletons = [1, 2, 3, 4, 5];
 
     const deleteComment = async () => {
+        const confirm = window.confirm("Are you sure you want to delete this comment?")
+        if (!confirm) return
         const response = await commentService.deleteComment({ commentId: comment._id })
         if (response.status < 400 && response.data) {
             setComments((prev) => prev.filter((c, i) => i !== index))
@@ -78,7 +87,7 @@ export default memo(function CommentCard({ comment, setComments, index, updateTo
             })
             if (!resData) {
                 getReplies(1);
-            } else{
+            } else {
                 setReplies((prev) => [response.data, ...prev])
             }
         } else {
@@ -212,40 +221,60 @@ export default memo(function CommentCard({ comment, setComments, index, updateTo
                     </div>
                     {
                         user && user._id === comment.commentedBy._id && readOnly &&
-                        <div className='flex flex-col justify-center hoverableEle'>
-                            <button><EllipsisVertical /></button>
-                            <div className='showingEle right-5 rounded-md bg-gray-700'>
-                                <button onClick={() => setReadOnly(false)} title='Edit Comment'
-                                    className='flex flix-nowrap justify-center text-[10px] font-semibold py-1 px-3 text-white hover:bg-gray-600 rounded-t-md w-full'>
-                                    <Pencil size={20} />
+                        <>
+                            <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                <button><EllipsisVertical /></button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent align="end" className="w-44">
+                                    <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                                    <DropdownMenuSeparator />
+                                    <DropdownMenuItem className=" cursor-pointer" onClick={() => setReadOnly(false)} title='Edit Comment'>
+                                        <Pencil className="mr-2 h-4 w-4" />
+                                        <span>Edit Comment</span>
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem className=" cursor-pointer" onClick={deleteComment}>
+                                        <Trash2 className="mr-2 h-4 w-4" />
+                                        <span>Delete Comment</span>
+                                    </DropdownMenuItem>
+                                </DropdownMenuContent>
+                            </DropdownMenu>
 
-                                </button>
-                                <AlertDialog>
-                                    <AlertDialogTrigger asChild>
-                                        <Button title='Delete Comment'
-                                            className='flex flix-nowrap justify-center text-[10px] font-semibold py-1 px-3 text-white hover:bg-gray-600 rounded-b-md'>
-                                            <Trash2 size={20} />
+                            {/* <div className='flex flex-col justify-center hoverableEle'>
+                                <button><EllipsisVertical /></button>
+                                <div className='showingEle right-5 rounded-md bg-gray-700'>
+                                    <button onClick={() => setReadOnly(false)} title='Edit Comment'
+                                        className='flex flix-nowrap justify-center text-[10px] font-semibold py-1 px-3 text-white hover:bg-gray-600 rounded-t-md w-full'>
+                                        <Pencil size={20} />
 
-                                        </Button>
-                                    </AlertDialogTrigger>
-                                    <AlertDialogContent>
-                                        <AlertDialogHeader>
-                                            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-                                            <AlertDialogDescription>
-                                                This action cannot be undone. This comment will permanently delete from your
-                                                account.
-                                            </AlertDialogDescription>
-                                        </AlertDialogHeader>
-                                        <AlertDialogFooter>
-                                            <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                            <AlertDialogAction onClick={deleteComment}
-                                                className="bg-red-500 text-white">Delete</AlertDialogAction>
-                                        </AlertDialogFooter>
-                                    </AlertDialogContent>
-                                </AlertDialog>
+                                    </button>
+                                    <AlertDialog>
+                                        <AlertDialogTrigger asChild>
+                                            <Button title='Delete Comment'
+                                                className='flex flix-nowrap justify-center text-[10px] font-semibold py-1 px-3 text-white hover:bg-gray-600 rounded-b-md'>
+                                                <Trash2 size={20} />
 
-                            </div>
-                        </div>
+                                            </Button>
+                                        </AlertDialogTrigger>
+                                        <AlertDialogContent>
+                                            <AlertDialogHeader>
+                                                <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                                                <AlertDialogDescription>
+                                                    This action cannot be undone. This comment will permanently delete from your
+                                                    account.
+                                                </AlertDialogDescription>
+                                            </AlertDialogHeader>
+                                            <AlertDialogFooter>
+                                                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                                <AlertDialogAction onClick={deleteComment}
+                                                    className="bg-red-500 text-white">Delete</AlertDialogAction>
+                                            </AlertDialogFooter>
+                                        </AlertDialogContent>
+                                    </AlertDialog>
+
+                                </div>
+                            </div> */}
+                        </>
                     }
                 </div>
 

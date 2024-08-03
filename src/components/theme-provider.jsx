@@ -38,6 +38,16 @@ export function ThemeProvider({
   const value = {
     theme,
     setTheme: (theme) => {
+      if (theme === "system") {
+        const systemTheme = window.matchMedia("(prefers-color-scheme: dark)")
+          .matches
+          ? "dark"
+          : "light"
+  
+        localStorage.setItem("theme-in-use", systemTheme)
+      } else {
+        localStorage.setItem("theme-in-use", theme)
+      }
       localStorage.setItem(storageKey, theme)
       setTheme(theme)
     },

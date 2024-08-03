@@ -5,17 +5,13 @@ import { Link } from 'react-router-dom'
 import { replyService } from '@/apiServices/replyServices'
 import { EllipsisVertical, Pencil, Star, Trash2 } from 'lucide-react'
 import {
-    AlertDialog,
-    AlertDialogAction,
-    AlertDialogCancel,
-    AlertDialogContent,
-    AlertDialogDescription,
-    AlertDialogFooter,
-    AlertDialogHeader,
-    AlertDialogTitle,
-    AlertDialogTrigger,
-} from "@/components/ui/alert-dialog"
-import { Button } from "@/components/ui/button"
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 import { useToast } from '../ui/use-toast'
 
 export default memo(function ReplyCard({ reply, setReplies, index, showReplyCreateForm, updateReplyCount }) {
@@ -27,6 +23,8 @@ export default memo(function ReplyCard({ reply, setReplies, index, showReplyCrea
 
 
     const deleteReply = async () => {
+        const confirm = window.confirm("Are you sure you want to delete this reply?")
+        if (!confirm) return
         const response = await replyService.deleteReply({ replyId: reply._id })
         if (response.status < 400 && response.data) {
             setReplies((prev) => prev.filter((r, i) => i !== index))
@@ -121,7 +119,25 @@ export default memo(function ReplyCard({ reply, setReplies, index, showReplyCrea
                 </div>
                 {
                     user && user._id === reply.repliedBy._id && readOnly &&
-                    <div className='flex flex-col justify-center hoverableEle'>
+                    <>
+                        <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                                <button><EllipsisVertical size={16} /></button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end" className="w-40">
+                                <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                                <DropdownMenuSeparator />
+                                <DropdownMenuItem className=" cursor-pointer" onClick={() => setReadOnly(false)} title='Edit Reply'>
+                                    <Pencil className="mr-2 h-4 w-4" />
+                                    <span>Edit Reply</span>
+                                </DropdownMenuItem>
+                                <DropdownMenuItem className=" cursor-pointer" onClick={deleteReply}>
+                                    <Trash2 className="mr-2 h-4 w-4" />
+                                    <span>Delete Reply</span>
+                                </DropdownMenuItem>
+                            </DropdownMenuContent>
+                        </DropdownMenu>
+                        {/* <div className='flex flex-col justify-center hoverableEle'>
                         <button><EllipsisVertical size={18} /></button>
                         <div className='showingEle right-4 rounded-md bg-gray-700'>
                             <button onClick={() => setReadOnly(false)}
@@ -151,7 +167,8 @@ export default memo(function ReplyCard({ reply, setReplies, index, showReplyCrea
                                 </AlertDialogContent>
                             </AlertDialog>
                         </div>
-                    </div>
+                    </div> */}
+                    </>
                 }
             </div>
 

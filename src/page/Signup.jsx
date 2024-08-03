@@ -102,8 +102,8 @@ export default function Signup() {
       }, [username]);
 
     return (
-        <div className="w-screen h-auto bg-blue-100 dark:bg-gray-950">
-            <div className="w-full lg:grid lg:min-h-[600px] lg:grid-cols-2 xl:min-h-[800px]">
+        <div className="w-screen fixed top-0 left-0 overflow-y-auto h-auto bg-blue-100 dark:bg-gray-950">
+            <div className="w-full lg:grid lg:min-h-[600px] lg:grid-cols-2 xl:min-h-[700px]">
             <div className="hidden bg-muted lg:block">
                 <img
                     src="/26217336_dv31_ofwk_220224.svg"

@@ -30,7 +30,7 @@ import {
   TabsTrigger,
 } from "@/components/ui/tabs"
 import { format } from "date-fns"
-import { Calendar as CalendarIcon,Github,Linkedin,BriefcaseBusiness, CloudCog } from "lucide-react";
+import { Calendar as CalendarIcon,Github,Linkedin,BriefcaseBusiness } from "lucide-react";
 import { cn } from "@/lib/utils"
 import { Calendar } from "@/components/ui/calendar"
 import {
@@ -136,7 +136,7 @@ export default function UpdateUser() {
   }
 
   return (
-    <div className="w-full lg:grid lg:min-h-[600px] lg:grid-cols-2 xl:min-h-[800px]">
+    <div className="w-screen h-screen fixed top-0 overflow-auto left-0 lg:grid lg:grid-cols-2">
       <div className="flex items-center justify-center py-12 bg-blue-100 dark:bg-gray-950">
         <Tabs defaultValue="account" className="w-[400px]">
           <TabsList className="grid w-full grid-cols-2">
