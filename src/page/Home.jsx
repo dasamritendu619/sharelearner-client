@@ -46,7 +46,8 @@ export default function Home() {
 
     
   return (
-    <div className='w-screen flex flex-nowrap justify-center fixed h-screen top-[94px] left-0 sm:top-[56px] overflow-y-auto'>
+    <div 
+    className='w-screen flex flex-nowrap justify-center fixed h-[calc(100vh-94px)] sm:h-[calc(100vh-58px)] top-[94px] left-0 sm:top-[56px] overflow-y-auto'>
       <div className='hidden lg:block lg:w-[25%]'>
         <nav>
           laura

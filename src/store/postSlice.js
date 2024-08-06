@@ -47,6 +47,9 @@ export const postSlice = createSlice({
         updateSavedPosts: (state, action) => {
             state.savedPosts = action.payload
         },
+        deletePost: (state, action) => {
+            // 
+        }
     },
 })
 

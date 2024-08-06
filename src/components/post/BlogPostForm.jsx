@@ -106,7 +106,7 @@ export default function BlogPostForm({data}) {
                         <SelectLabel>Visibility</SelectLabel>
                         <SelectItem value="public">Public</SelectItem>
                         <SelectItem value="private">Private</SelectItem>
-                        <SelectItem value="friends">My friends</SelectItem>
+                        {/* <SelectItem value="friends">My friends</SelectItem> */}
                       </SelectGroup>
                     </SelectContent>
                   </Select>

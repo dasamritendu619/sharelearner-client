@@ -124,7 +124,7 @@ export default function AssetPostForm({ data, type }) {
               <SelectLabel>Visibility</SelectLabel>
               <SelectItem value="public">Public</SelectItem>
               <SelectItem value="private">Private</SelectItem>
-              <SelectItem value="friends">My friends</SelectItem>
+              {/* <SelectItem value="friends">My friends</SelectItem> */}
             </SelectGroup>
           </SelectContent>
         </Select>
@@ -159,7 +159,7 @@ export default function AssetPostForm({ data, type }) {
           setFile(e.target.files[0])
           }} />
 
-      {!data?.assetURL && <Button onClick={() => inputRef.current.click()}
+      {!data && <Button onClick={() => inputRef.current.click()}
         className=' w-40 block mx-auto mb-10'>
         {fileUrl ? "Change" : "Upload"} {type}
       </Button>}

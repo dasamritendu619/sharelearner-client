@@ -15,7 +15,7 @@ import { Button } from '@/components/ui/moving-border'
 import { Button as Btn } from '@/components/ui/button'
 
 export default function PostCard({ post }) {
-    console.log(post)
+    //console.log(post)
     const user = useSelector(state => state.auth.user)
     const dispatch = useDispatch()
     const { toast } = useToast()
@@ -56,32 +56,40 @@ export default function PostCard({ post }) {
                         {post.title}
                     </p>
                 </div>
+                <>
                 {
                     (post.type === 'blog' || post.forkedFrom?.type === 'blog') &&
-                    <Link to={`/post/${post._id}`} className='px-2 overflow-hidden pb-2'>
+                    <Link to={`/post/${post._id}`} className='px-2 overflow-hidden py-2 block'>
                         {parse(post.type !== "forked" ? post.content : post.forkedFrom.content)}
                     </Link>
                 }
 
                 {
                     (post.type === 'photo' || post.forkedFrom?.type === 'photo') &&
-                    <Link to={`/post/${post._id}`} className='px-2 pb-2'>
+                    <Link to={`/post/${post._id}`} className='px-2 py-2 block'>
                         <img src={post.type !== "forked" ? post.assetURL : post.forkedFrom.assetURL} alt="post photo" className='mx-auto' />
                     </Link>
                 }
 
                 {
                     (post.type === 'pdf' || post.forkedFrom?.type === 'pdf') &&
-                    <Link to={`/post/${post._id}`} className='px-2 pb-2'>
-                        <img src={post.type !== "forked" ? post.assetURL : post.forkedFrom.assetURL} width="100%" height="600px"></img>
+                    <Link to={`/post/${post._id}`} className='px-2 py-2 block'>
+                        <iframe src={post.type !== "forked" ? post.assetURL : post.forkedFrom.assetURL}
+                        width="100%" height="600px"></iframe>
+                        {/* <embed src={post.type !== "forked" ? post.assetURL : post.forkedFrom.assetURL} width="100%" height="600px" /> */}
+                        {/* <img src={post.type !== "forked" ? post.assetURL : post.forkedFrom.assetURL} width="100%" height="600px"/></img> */}
                     </Link>
                 }
 
                 {
                     (post.type === 'video' || post.forkedFrom?.type === 'video') &&
-                    <Link to={`/post/${post._id}`} className='px-2 pb-2'>
+                    <Link to={`/post/${post._id}`} className='px-2 py-2 block'>
                         <video src={post.type !== "forked" ? post.assetURL : post.forkedFrom.assetURL} controls className='mx-auto' ></video>
                     </Link>
+                }
+                </>
+                {
+                    
                 }
             </div>
 

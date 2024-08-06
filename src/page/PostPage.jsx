@@ -4,7 +4,7 @@ import { useSelector, useDispatch } from 'react-redux'
 import { useEffect, useState, useRef } from 'react'
 import { postService } from '@/apiServices/postServices'
 import parse from 'html-react-parser'
-import { ChevronDown, MessageCircle, MessageSquareMore, Save, Star, UserRoundPlus, House } from 'lucide-react'
+import { ChevronDown, MessageCircle, MessageSquareMore, Save, Star, UserRoundPlus, House, EllipsisVertical, Pencil, Trash2 } from 'lucide-react'
 import { likesService } from '@/apiServices/likesServices'
 import { followersService } from '@/apiServices/followersServices'
 import { savedService } from '@/apiServices/savedServices'
@@ -20,6 +20,14 @@ import ProfileCard from '@/components/ProfileCard'
 import ProfileBtn from '@/components/auth/ProfileBtn'
 import { ModeToggle } from '@/components/mode-toggle'
 import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import {
   Sheet,
   SheetContent,
   SheetDescription,
@@ -28,6 +36,17 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet"
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
 
 export default function PostPage() {
   const { postId } = useParams();
@@ -45,6 +64,7 @@ export default function PostPage() {
   const [profileResData, setProfileResData] = useState(null)
   const skeletons = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
   const [page, setPage] = useState(1)
+  const deleteButtonRef = useRef(null)
 
   const isPostViewed = () => {
     for (let i = 0; i < viewedPosts.length; i++) {
@@ -93,7 +113,7 @@ export default function PostPage() {
     if (!commentInputVal.trim()) return;
     const responce = await commentService.createComment({ postId, content: commentInputVal.trim() })
     if (responce.status < 400 && responce.data) {
-      console.log(responce.data)
+      // console.log(responce.data)
       const newComment = {
         ...responce.data,
         commentedBy: {
@@ -112,6 +132,19 @@ export default function PostPage() {
     } else {
       toast({
         title: "Failed to add comment",
+        description: responce.message,
+        variant: "destructive",
+      });
+    }
+  }
+
+  const deletePost = async ()=>{
+     const responce = await postService.deletePost({postId})
+     if (responce.status < 400 && responce.data) {
+      
+    } else {
+      toast({
+        title: "Failed to delete post",
         description: responce.message,
         variant: "destructive",
       });
@@ -236,9 +269,26 @@ export default function PostPage() {
                     <p className=' leading-3 text-[11px] text-gray-500'>
                       {new Date(post.createdAt).toDateString()}
                     </p>
-                    <p className='font-semibold leading-5 text-[14px] lg:text-[16px]'>
-                      {post.title}
-                    </p>
+                    <div className='flex flex-nowrap justify-between'>
+                      <span className='font-semibold leading-5 text-[14px] w-[calc(100%-20px)] lg:text-[16px] block'>{post.title}</span>
+                      {user && post.author._id === user._id && <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                                <button><EllipsisVertical size={18} /></button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end" className="w-40">
+                                <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                                <DropdownMenuSeparator />
+                                <DropdownMenuItem className=" cursor-pointer" onClick={() => navigate(`/update-post/${post._id}`)} title='Edit Reply'>
+                                    <Pencil className="mr-2 h-4 w-4" />
+                                    <span>Edit Post</span>
+                                </DropdownMenuItem>
+                                <DropdownMenuItem className=" cursor-pointer" onClick={()=>deleteButtonRef.current.click()}>
+                                    <Trash2 className="mr-2 h-4 w-4" />
+                                    <span>Delete Post</span>
+                                </DropdownMenuItem>
+                            </DropdownMenuContent>
+                        </DropdownMenu>}
+                    </div>
                   </div>
                   {
                     (post.type === 'blog' || post.forkedFrom[0]?.type === 'blog') &&
@@ -272,26 +322,26 @@ export default function PostPage() {
             </div>
             <div className='w-full lg:w-[35%]'>
               <div className='hidden lg:flex lg:flex-nowrap lg:justify-end'>
-              <Btn onClick={() => navigate('/login')}
-                variant="outline" size="icon" className='my-2 mx-[3px] rounded-full bg-white dark:bg-gray-700 font-bold'>
+                <Btn onClick={() => navigate('/login')}
+                  variant="outline" size="icon" className='my-2 mx-[3px] rounded-full bg-white dark:bg-gray-700 font-bold'>
                   <House size={20} />
-                  </Btn>
-                <Btn onClick={()=>{
+                </Btn>
+                <Btn onClick={() => {
                   if (user) {
                     navigate('/chat')
                   } else {
                     navigate('/login')
                   }
                 }}
-                variant="outline" size="icon" className='my-2 mx-[3px] rounded-full bg-white dark:bg-gray-700 font-bold'>
-                <MessageCircle size={20} />
+                  variant="outline" size="icon" className='my-2 mx-[3px] rounded-full bg-white dark:bg-gray-700 font-bold'>
+                  <MessageCircle size={20} />
                 </Btn>
                 <ModeToggle />
-                {user ? <ProfileBtn /> : 
-                <Btn onClick={() => navigate('/login')}
-                variant="outline" size="icon" 
-                className='my-2 ml-[3px] mr-2 xl:mr-12 rounded-full w-20 bg-white dark:bg-gray-700 font-bold'>
-                  Login
+                {user ? <ProfileBtn /> :
+                  <Btn onClick={() => navigate('/login')}
+                    variant="outline" size="icon"
+                    className='my-2 ml-[3px] mr-2 xl:mr-12 rounded-full w-20 bg-white dark:bg-gray-700 font-bold'>
+                    Login
                   </Btn>}
               </div>
               <div className='flex-center mt-4'>
@@ -464,6 +514,24 @@ export default function PostPage() {
             <div className="loader3"></div>
           </div>
       }
+          <AlertDialog>
+      <AlertDialogTrigger asChild>
+        <button className='hidden' ref={deleteButtonRef}>Show Dialog</button>
+      </AlertDialogTrigger>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+          <AlertDialogDescription>
+            This action cannot be undone. This will permanently delete post
+             and remove your post data from our servers.
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel>Cancel</AlertDialogCancel>
+          <AlertDialogAction>Continue</AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
     </>
   )
 }
