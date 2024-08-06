@@ -19,6 +19,7 @@ import SearchPage from "./page/SearchPage";
 import ProfilesPage from "./page/ProfilesPage";
 import BlogsPage from "./page/BlogsPage";
 import VideosPage from "./page/VideosPage";
+import SavedPosts from "./page/SavedPosts";
 
 export {
     Login,
@@ -42,4 +43,5 @@ export {
     ProfilesPage, // under construction
     BlogsPage, // under construction
     VideosPage, // under construction
+    SavedPosts, // under construction
 }

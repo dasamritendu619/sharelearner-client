@@ -28,6 +28,7 @@ import {
   ProfilesPage,
   BlogsPage,
   VideosPage,
+  SavedPosts,
 } from './index.js'
 
 const routes = createBrowserRouter(
@@ -57,6 +58,12 @@ const routes = createBrowserRouter(
       <Route path="chat" element={
         <AuthLayout authentication={true}>
           <Chat />
+        </AuthLayout>
+      } />
+
+      <Route path="saved-posts" element={
+        <AuthLayout authentication={true}>
+          <SavedPosts />
         </AuthLayout>
       } />
 

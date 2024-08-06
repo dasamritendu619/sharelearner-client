@@ -128,11 +128,11 @@ export class PostService{
     }
 
 
-    async getAllPosts({page=1,limit=20,type='all'}){
+    async getAllPosts({page=1,limit=20,type='all',visibility='public'}){
         const accessToken = localStorage.getItem('accessToken');
         const refreshToken = localStorage.getItem('refreshToken');
         try {
-            const response = await axios.get(`${conf.backendUrl}/api/v1/post/get-all?page=${page}&limit=${limit}&type=${type}`,{
+            const response = await axios.get(`${conf.backendUrl}/api/v1/post/get-all?page=${page}&limit=${limit}&type=${type}&visibility=${visibility}`,{
                 headers: {
                     Authorization: `Bearer ${accessToken} ${refreshToken}`,
                 }

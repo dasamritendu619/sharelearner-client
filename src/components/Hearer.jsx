@@ -3,6 +3,7 @@ import { ModeToggle } from './mode-toggle'
 import ProfileBtn from './auth/ProfileBtn'
 import { Link, NavLink } from 'react-router-dom'
 import { Button } from "@/components/ui/button"
+import { useSelector } from 'react-redux'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -16,13 +17,14 @@ import { BookOpen, FileText, House, Image, MessageCircle, Plus, Search, UsersRou
 
 export default function Hearer() {
   const navigate = useNavigate()
+  const user = useSelector((state) => state.auth.user)
 
   return (
     <>
     <header className='flex justify-between sm:border-b '>
       <div className='flex flex-nowrap justify-start w-[50%] sm:w-[30%] md:w-[33%]'>
         <Link className='my-2 block'>
-          <img src="letter-s-modern-colorful-logo-business-s-letter-identity-logo-vector-design_135595-1206-removebg-preview-min.png"
+          <img src="/letter-s-modern-colorful-logo-business-s-letter-identity-logo-vector-design_135595-1206-removebg-preview-min.png"
             alt="logo"
             className='w-10 mx-1 md:mx-2' />
         </Link>
@@ -108,7 +110,12 @@ export default function Hearer() {
         </DropdownMenu>
 
         <ModeToggle />
-        <ProfileBtn className='my-2 ml-[4px] mr-1 md:mr-2 rounded-full' />
+        {user ? <ProfileBtn className='my-2 ml-[4px] mr-1 md:mr-2 rounded-full' /> : 
+        <Link to='/login' 
+        className='my-2 ml-[4px] mr-1 md:mr-2 rounded-full bg-white text-blue-600 dark:bg-gray-700 font-bold py-2 px-4'>
+          Login
+        </Link>
+        }
       </div>
     </header>
 

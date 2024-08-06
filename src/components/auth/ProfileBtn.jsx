@@ -12,7 +12,7 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { useSelector } from 'react-redux'
-import { Blend, Github, Handshake, House, LifeBuoy, LogOut, MessageSquareDiff, Settings, User } from 'lucide-react'
+import { Blend, BookMarked, Github, Handshake, House, LifeBuoy, LogOut, MessageSquareDiff, Settings, User } from 'lucide-react'
 import { authService } from '@/apiServices/authServices'
 import { useDispatch } from 'react-redux'
 import { logout } from '@/store/authSlice'
@@ -63,6 +63,11 @@ export default function ProfileBtn({className='my-2 ml-[3px] mr-1 sm:mr-2 xl:mr-
                         <User className="mr-2 h-4 w-4" />
                         <span>Profile</span>
                         <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => navigate("/saved-posts")}>
+                        <BookMarked className="mr-2 h-4 w-4" />
+                        <span>Saved posts</span>
+                        <DropdownMenuShortcut>⇧⌘S</DropdownMenuShortcut>
                     </DropdownMenuItem>
                     <DropdownMenuItem onClick={() => navigate("/update-user")}>
                         <Settings className="mr-2 h-4 w-4" />
