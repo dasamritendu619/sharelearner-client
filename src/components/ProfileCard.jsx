@@ -26,13 +26,14 @@ export default function profileCard({ profile, setProfiles }) {
   }
 
   return (
-    <div className='flex justify-start flex-nowrap py-2' title={`${profile.followersCount} Followers`}>
+    <div className='flex justify-between flex-nowrap py-2' title={`${profile.followersCount} Followers`}>
+      <div className=' flex flex-nowrap justify-start'>
       <Link to={`/user/${profile.username}`}>
         <img src={profile.avatar.replace("upload/", "upload/w_70/")} alt='avatar'
           className='rounded-full w-10 sm:w-12' />
       </Link>
       <p className='ml-2'>
-        <Link to={`/user/${profile.username}`} className=' text-[12px] sm:text-[16px] leading-3 mt-1 font-semibold block'>
+        <Link to={`/user/${profile.username}`} className=' text-[12px] sm:text-[14px] leading-3 mt-1 font-semibold block'>
           {profile.fullName}
         </Link>
 
@@ -40,6 +41,7 @@ export default function profileCard({ profile, setProfiles }) {
           @{profile.username}
         </Link>
       </p>
+      </div>
       <button onClick={toggleFollow} disabled={!user || user._id === profile._id}
         className={`flex-center ml-2 sm:ml-3 mt-1 px-[6px] sm:px-3 h-6 sm:h-7 border rounded-full leading-3 ${!profile.isFollowedByMe ? "bg-green-500" : "bg-gray-300 dark:bg-gray-700"}`}>
         {

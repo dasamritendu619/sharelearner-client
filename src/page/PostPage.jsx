@@ -19,6 +19,7 @@ import { commentService } from '@/apiServices/commentServices'
 import ProfileCard from '@/components/ProfileCard'
 import ProfileBtn from '@/components/auth/ProfileBtn'
 import { ModeToggle } from '@/components/mode-toggle'
+import { deleteAPost } from '@/store/postSlice'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -141,7 +142,8 @@ export default function PostPage() {
   const deletePost = async ()=>{
      const responce = await postService.deletePost({postId})
      if (responce.status < 400 && responce.data) {
-      
+      dispatch(deleteAPost(postId))
+      navigate('/');
     } else {
       toast({
         title: "Failed to delete post",
@@ -166,7 +168,7 @@ export default function PostPage() {
         if (res.data && res.status < 400) {
           setPost(res.data);
           dispatch(viewPost(res.data));
-          // console.log(res.data)
+          //console.log(res.data)
         } else {
           navigate('/');
         }
@@ -187,7 +189,7 @@ export default function PostPage() {
     // console.log(response)
     if (response.status < 400 && response.data) {
       setProfileResData(response.data)
-      console.log(response.data)
+      //console.log(response.data)
       if (page === 1) {
         setProfiles(response.data.docs)
       } else {
@@ -344,6 +346,39 @@ export default function PostPage() {
                     Login
                   </Btn>}
               </div>
+
+
+              {post.forkedFrom[0] && post.forkedFrom[0].visibility==='public' && <div>
+              <div 
+                className='flex justify-start border-gray-600 lg:mt-2 flex-nowrap px-3 pt-2 border border-y-0 lg:border-t lg:border-b-0 mx-4'>
+                    <Link to={`/user/${post.forkedFrom[0].author.username}`}>
+                        <img src={post.forkedFrom[0].author.avatar.replace("upload/", "upload/w_40/")} alt='avatar'
+                            className='rounded-full w-10' />
+                    </Link>
+                    <p className='ml-2'>
+                        <Link to={`/user/${post.forkedFrom[0].author.username}`} className='text-[14px] leading-3 mt-1 font-semibold block'>
+                            {post.forkedFrom[0].author.fullName}
+                        </Link>
+
+                        <Link to={`/user/${post.forkedFrom[0].author.username}`} className='text-[10px] text-gray-400'>
+                            @{post.forkedFrom[0].author.username}
+                        </Link>
+                    </p>
+                    
+                </div>
+                <Link to={`/post/${post.forkedFrom[0]._id}`} 
+                className='border border-gray-600 border-t-0 lg:border-y-0 px-4 mx-4 pt-3 pb-1 block'>
+                    <p className=' leading-3 text-[11px] text-gray-500'>
+                        {new Date(post.forkedFrom[0].createdAt).toDateString()}
+                    </p>
+                    <p className='font-semibold leading-5 text-[14px] lg:text-[16px]'>
+                        {post.forkedFrom[0].title}
+                    </p>
+                </Link>
+              </div>}
+
+
+
               <div className='flex-center mt-4'>
                 <div className='flex flex-col mx-[2px] lg:mx-1'>
                   <button className='post-btn' onClick={toggleLike}>
@@ -528,7 +563,7 @@ export default function PostPage() {
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel>Cancel</AlertDialogCancel>
-          <AlertDialogAction>Continue</AlertDialogAction>
+          <AlertDialogAction onClick={deletePost} className='bg-red-600 hover:bg-red-500 text-white'>Delete</AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>

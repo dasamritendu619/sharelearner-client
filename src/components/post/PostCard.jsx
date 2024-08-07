@@ -13,6 +13,18 @@ import { useToast } from '@/components/ui/use-toast'
 import { viewPost, updateViewedPost } from '@/store/postSlice'
 import { Button } from '@/components/ui/moving-border'
 import { Button as Btn } from '@/components/ui/button'
+import { useState,useEffect,useRef } from 'react'
+import ProfileCard from '../ProfileCard'
+
+import {
+    Sheet,
+    SheetContent,
+    SheetDescription,
+    SheetFooter,
+    SheetHeader,
+    SheetTitle,
+    SheetTrigger,
+  } from "@/components/ui/sheet"
 
 export default function PostCard({ post }) {
     //console.log(post)
@@ -20,62 +32,87 @@ export default function PostCard({ post }) {
     const dispatch = useDispatch()
     const { toast } = useToast()
     const navigate = useNavigate()
+    const [profiles, setProfiles] = useState([])
+    const [profileResData, setProfileResData] = useState(null)
+    const skeletons = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+
+
+    const getProfilesWhoLikePost = async (page) => {
+        const limit = 20;
+        const response = await likesService.getProfilesWhoLikePost({ postId:post._id, page, limit })
+        // console.log(response)
+        if (response.status < 400 && response.data) {
+          setProfileResData(response.data)
+          //console.log(response.data)
+          if (page === 1) {
+            setProfiles(response.data.docs)
+          } else {
+            setProfiles([...profiles, ...response.data.docs])
+          }
+        } else {
+          toast({
+            title: "Failed to get Profiles",
+            description: response.message,
+            variant: "destructive",
+          })
+        }
+      }
 
     return (
-            <div>
-                <div className='flex justify-start border-gray-600 mt-2 flex-nowrap px-3 pt-2 border border-b-0 mx-4'>
-                    <Link to={`/user/${post.author.username}`}>
-                        <img src={post.author.avatar.replace("upload/", "upload/w_40/")} alt='avatar'
-                            className='rounded-full w-10' />
+        <div className='bg-white dark:bg-gray-800 rounded-lg shadow-lg px-2 py-3 sm:px-3 my-2 md:mr-2 lg:mx-2'>
+            <div className='flex justify-start flex-nowrap'>
+                <Link to={`/user/${post.author.username}`}>
+                    <img src={post.author.avatar.replace("upload/", "upload/w_40/")} alt='avatar'
+                        className='rounded-full w-10' />
+                </Link>
+                <p className='ml-2'>
+                    <Link to={`/user/${post.author.username}`} className='text-[14px] leading-3 mt-1 font-semibold block'>
+                        {post.author.fullName}
                     </Link>
-                    <p className='ml-2'>
-                        <Link to={`/user/${post.author.username}`} className='text-[14px] leading-3 mt-1 font-semibold block'>
-                            {post.author.fullName}
-                        </Link>
 
-                        <Link to={`/user/${post.author.username}`} className='text-[10px] text-gray-400'>
-                            {post.author.followersCount} followers
-                        </Link>
-                    </p>
-                    <button disabled={!user || user._id === post.author._id}
-                        className={`flex-center ml-3 px-3 h-7 rounded-full leading-3 ${!post.author.isFollowedByMe ? "bg-green-500" : "bg-gray-300 dark:bg-gray-700"}`}>
-                        {
-                            !post.author.isFollowedByMe ? <>
-                                <UserRoundPlus size={16} /> <span className='pl-1 text-[10px]'>Follow</span>
-                            </> : <>
-                                <span className='pl-1 text-[12px]'>Following</span>
-                            </>
-                        }
-                    </button>
-                </div>
-                <div className='border border-gray-600 border-y-0 px-4 mx-4 pt-3 pb-1'>
-                    <p className=' leading-3 text-[11px] text-gray-500'>
-                        {new Date(post.createdAt).toDateString()}
-                    </p>
-                    <p className='font-semibold leading-5 text-[14px] lg:text-[16px]'>
-                        {post.title}
-                    </p>
-                </div>
-                <>
+                    <Link to={`/user/${post.author.username}`} className='text-[10px] text-gray-400'>
+                        {post.author.followersCount} followers
+                    </Link>
+                </p>
+                <button disabled={!user || user._id === post.author._id}
+                    className={`flex-center ml-3 px-3 h-7 rounded-full leading-3 ${!post.author.isFollowedByMe ? "bg-green-500" : "bg-gray-300 dark:bg-gray-700"}`}>
+                    {
+                        !post.author.isFollowedByMe ? <>
+                            <UserRoundPlus size={16} /> <span className='pl-1 text-[10px]'>Follow</span>
+                        </> : <>
+                            <span className='pl-1 text-[12px]'>Following</span>
+                        </>
+                    }
+                </button>
+            </div>
+            <div className=' ml-2 pt-1 pb-1'>
+                <p className=' leading-3 text-[11px] text-gray-500'>
+                    {new Date(post.createdAt).toDateString()}
+                </p>
+                <p className='font-semibold leading-5 text-[14px] lg:text-[16px]'>
+                    {post.title}
+                </p>
+            </div>
+            <>
                 {
                     (post.type === 'blog' || post.forkedFrom?.type === 'blog') &&
-                    <Link to={`/post/${post._id}`} className='px-2 overflow-hidden py-2 block'>
+                    <Link to={`/post/${post._id}`} className='overflow-hidden pt-2 block'>
                         {parse(post.type !== "forked" ? post.content : post.forkedFrom.content)}
                     </Link>
                 }
 
                 {
                     (post.type === 'photo' || post.forkedFrom?.type === 'photo') &&
-                    <Link to={`/post/${post._id}`} className='px-2 py-2 block'>
+                    <Link to={`/post/${post._id}`} className='pt-2 block'>
                         <img src={post.type !== "forked" ? post.assetURL : post.forkedFrom.assetURL} alt="post photo" className='mx-auto' />
                     </Link>
                 }
 
                 {
                     (post.type === 'pdf' || post.forkedFrom?.type === 'pdf') &&
-                    <Link to={`/post/${post._id}`} className='px-2 py-2 block'>
+                    <Link to={`/post/${post._id}`} className='pt-2 block'>
                         <iframe src={post.type !== "forked" ? post.assetURL : post.forkedFrom.assetURL}
-                        width="100%" height="600px"></iframe>
+                            width="100%" height="600px" className='h-[500px] lg:h-[600px]'></iframe>
                         {/* <embed src={post.type !== "forked" ? post.assetURL : post.forkedFrom.assetURL} width="100%" height="600px" /> */}
                         {/* <img src={post.type !== "forked" ? post.assetURL : post.forkedFrom.assetURL} width="100%" height="600px"/></img> */}
                     </Link>
@@ -83,15 +120,132 @@ export default function PostCard({ post }) {
 
                 {
                     (post.type === 'video' || post.forkedFrom?.type === 'video') &&
-                    <Link to={`/post/${post._id}`} className='px-2 py-2 block'>
+                    <Link to={`/post/${post._id}`} className='pt-2 block'>
                         <video src={post.type !== "forked" ? post.assetURL : post.forkedFrom.assetURL} controls className='mx-auto' ></video>
                     </Link>
                 }
-                </>
-                {
-                    
-                }
-            </div>
+            </>
+            {
+                post.forkedFrom && post.forkedFrom.visibility === 'public' && <div>
+                    <div
+                        className='flex justify-start flex-nowrap'>
+                        <Link to={`/user/${post.forkedFrom.author.username}`}>
+                            <img src={post.forkedFrom.author.avatar.replace("upload/", "upload/w_40/")} alt='avatar'
+                                className='rounded-full w-10' />
+                        </Link>
+                        <p className='ml-2'>
+                            <Link to={`/user/${post.forkedFrom.author.username}`} className='text-[14px] leading-3 mt-1 font-semibold block'>
+                                {post.forkedFrom.author.fullName}
+                            </Link>
+
+                            <Link to={`/post/${post.forkedFrom._id}`} className='text-[10px] text-gray-400'>
+                            {new Date(post.forkedFrom.createdAt).toDateString()}
+                            </Link>
+                        </p>
+
+                    </div>
+                    <Link to={`/post/${post.forkedFrom._id}`}
+                        className='ml-2 pb-1 block font-semibold text-[14px] lg:text-[16px]'>
+                        {post.forkedFrom.title}
+                    </Link>
+                </div>
+            }
+            <hr />
+            
+
+            <div className='flex-center mt-4'>
+                <div className='flex flex-col mx-[2px] lg:mx-1'>
+                  <button className='post-btn' >
+                    {
+                      !post.isLikedByMe ?
+                        <>
+                          <Star size={20} /> <span className='pl-1 text-[12px]'>Star</span>
+                        </> : <> <img src="/star-svgrepo-com.svg" alt="star" className='w-5' /> <span className='pl-1 text-[12px]'>Star</span> </>
+                    }
+                  </button>
+
+                  <Sheet>
+                    <SheetTrigger asChild>
+                      <button onClick={() => {
+                        if (!profileResData) {
+                          getProfilesWhoLikePost(1)
+                        }
+                      }}
+                        className='text-[12px] text-gray-600 mt-1 dark:text-gray-400'>
+                        {post.likesCount} Stars
+                      </button>
+                    </SheetTrigger>
+                    <SheetContent side="left">
+                      <SheetHeader>
+                        <SheetTitle>Liked By</SheetTitle>
+                        <SheetDescription className="pb-3">
+                          All the users who liked this post.
+                        </SheetDescription>
+                      </SheetHeader> <hr />
+                      {
+                        !profileResData ? skeletons.map((i) => {
+                          return <div className="flex items-center space-x-4 my-3 sm:pl-8 md:pl-12 overflow-auto" key={i}>
+                            <Skeleton className="h-12 w-12 rounded-full" />
+                            <div className="space-y-2">
+                              <Skeleton className="h-4 w-[150px] sm:w-[200px]" />
+                              <Skeleton className="h-4 w-[100px] sm:w-[150px]" />
+                            </div>
+                          </div>
+                        }) : <div className='pt-2'>
+                          {
+                            profiles.length > 0 ? profiles.map((profile) => {
+                              return <ProfileCard profile={profile} key={profile._id} setProfiles={setProfiles} />
+                            }) : <p className='text-center py-6'>
+                              No one like this post!
+                            </p>
+                          }
+                          {
+                            profileResData.page < profileResData.totalPages &&
+                            <Btn className="block mx-auto my-4"
+                              onClick={() => {
+                                getProfilesWhoLikePost(profileResData.page + 1)
+                              }} >
+                              See more
+                            </Btn>
+                          }
+                        </div>
+                      }
+
+                      <SheetFooter>
+
+                      </SheetFooter>
+                    </SheetContent>
+                  </Sheet>
+
+                </div>
+
+                <div className='flex flex-col mx-[2px] lg:mx-1'>
+                  <button className='post-btn' onClick={() => navigate(`/post/${post._id}`)}>
+                    <MessageSquareMore size={20} /> <span className='pl-1 text-[12px]'>Comment</span>
+                  </button>
+                  <button disabled className='text-[12px] text-gray-600 mt-1 dark:text-gray-400'>
+                    {post.commentsCount} Comments
+                  </button>
+                </div>
+
+                <SharePost post={post} />
+
+                <div className='flex flex-col mx-[2px] lg:mx-1'>
+                  <button className='post-btn' >
+                    {!post.isSavedByMe ? <><Save size={20} /> <span className='pl-1 text-[12px]'>Save</span></> :
+                      <>
+                        <><Save size={20} color='green' /> <span className='pl-1 text-[12px]'>Saved</span></>
+                      </>
+                    }
+                  </button>
+                  <button disabled className='text-[12px] text-gray-600 mt-1 dark:text-gray-400'>
+                    {post.savedCount} Saves
+                  </button>
+                </div>
+              </div>
+
+
+        </div>
 
     )
 }

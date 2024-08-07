@@ -31,6 +31,7 @@ export default function SharePost({ post, className = 'mx-[2px] lg:mx-1' }) {
     const [visibility, setVisibility] = useState("public")
     const { register, handleSubmit } = useForm()
     const navigate = useNavigate();
+    const postURL = window.location.protocol + "//" + window.location.host + "/post/" + post._id
 
     const forkPost = async (data) => {
         const response = await postService.forkPosts({
@@ -115,10 +116,10 @@ export default function SharePost({ post, className = 'mx-[2px] lg:mx-1' }) {
                             </div>}
 
                             <div className='flex flex-nowrap justify-center my-4'>
-                                <Input type="text" value={window.location.href} readOnly className="border-r-0 outline-none" />
+                                <Input type="text" value={postURL} readOnly className="border-r-0 outline-none" />
                                 <button className=" border border-l-0 rounded-md pr-2"
                                     onClick={() => {
-                                        navigator.clipboard.writeText(window.location.href);
+                                        navigator.clipboard.writeText(postURL);
                                         toast({
                                             title: "Link Copied to Clipboard!",
                                             className: "bg-green-500",

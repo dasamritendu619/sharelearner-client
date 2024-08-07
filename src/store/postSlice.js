@@ -47,8 +47,8 @@ export const postSlice = createSlice({
         updateSavedPosts: (state, action) => {
             state.savedPosts = action.payload
         },
-        deletePost: (state, action) => {
-            // 
+        deleteAPost: (state, action) => {
+            state.viewedPosts = state.viewedPosts.filter(post => post._id !== action.payload)
         }
     },
 })
@@ -60,6 +60,7 @@ export const {
     updateVideoPosts,
     updateHpmePosts,
     updateSavedPosts,
+    deleteAPost,
  } = postSlice.actions;
 
 export default postSlice.reducer;

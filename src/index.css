@@ -96,7 +96,7 @@
   }
 
   .viewing-asset{
-    max-height: calc(100vh - 120px);
+    @apply lg:max-h-[calc(100vh-120px)]
   }
 
   .hoverableEle{
