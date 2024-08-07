@@ -2,18 +2,15 @@ import React from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
 import parse from 'html-react-parser'
-import { ChevronDown, MessageCircle, MessageSquareMore, Save, Star, UserRoundPlus, House } from 'lucide-react'
+import { MessageSquareMore, Save, Star, UserRoundPlus } from 'lucide-react'
 import { likesService } from '@/apiServices/likesServices'
 import { followersService } from '@/apiServices/followersServices'
 import { savedService } from '@/apiServices/savedServices'
 import { Skeleton } from "@/components/ui/skeleton"
-import CommentCard from '@/components/post/CommentCard'
 import SharePost from '@/components/post/SharePost'
 import { useToast } from '@/components/ui/use-toast'
-import { viewPost, updateViewedPost } from '@/store/postSlice'
-import { Button } from '@/components/ui/moving-border'
 import { Button as Btn } from '@/components/ui/button'
-import { useState,useEffect,useRef } from 'react'
+import { useState } from 'react'
 import ProfileCard from '../ProfileCard'
 
 import {
@@ -26,7 +23,7 @@ import {
     SheetTrigger,
   } from "@/components/ui/sheet"
 
-export default function PostCard({ post }) {
+export default function PostCard({ post, updatePosts }) {
     //console.log(post)
     const user = useSelector(state => state.auth.user)
     const dispatch = useDispatch()
@@ -35,6 +32,66 @@ export default function PostCard({ post }) {
     const [profiles, setProfiles] = useState([])
     const [profileResData, setProfileResData] = useState(null)
     const skeletons = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+
+
+    const toggleFollow = async () => {
+      if (updatePosts) {
+        updatePosts({ ...post, 
+          author: { ...post.author, 
+            isFollowedByMe: !post.author.isFollowedByMe,
+            followersCount: post.author.isFollowedByMe ? post.author.followersCount - 1 : post.author.followersCount + 1
+           } })
+      }
+        const response = await followersService.toggleFollowUser({
+          profileId: post.author._id,
+        })
+        if (response.status >= 400 || !response.data) {
+          toast({
+            title: "Failed to Follow",
+            description: response.message,
+            variant: "destructive",
+          })
+        } 
+    }
+
+    const toggleLike = async () => {
+      if (updatePosts) {
+        updatePosts({ ...post, 
+          isLikedByMe: !post.isLikedByMe,
+          likesCount: post.isLikedByMe ? post.likesCount - 1 : post.likesCount + 1
+         })
+      }
+        const response = await likesService.toggleLikePost({
+          postId: post._id,
+        })
+        if (response.status >= 400 || !response.data) {
+          toast({
+            title: "Failed to Like",
+            description: response.message,
+            variant: "destructive",
+          })
+        }
+    }
+
+    const toggleSave = async () => {
+      if (updatePosts) {
+        updatePosts({ ...post, 
+          isSavedByMe: !post.isSavedByMe,
+          savedCount: post.isSavedByMe ? post.savedCount - 1 : post.savedCount + 1
+         })
+      }
+        const response = await savedService.toggleSavedPost({
+          postId: post._id,
+        })
+        if (response.status >= 400 || !response.data) {
+          toast({
+            title: "Failed to Save",
+            description: response.message,
+            variant: "destructive",
+          })
+        }
+    }
+    
 
 
     const getProfilesWhoLikePost = async (page) => {
@@ -74,7 +131,7 @@ export default function PostCard({ post }) {
                         {post.author.followersCount} followers
                     </Link>
                 </p>
-                <button disabled={!user || user._id === post.author._id}
+                <button disabled={!user || user._id === post.author._id} onClick={toggleFollow}
                     className={`flex-center ml-3 px-3 h-7 rounded-full leading-3 ${!post.author.isFollowedByMe ? "bg-green-500" : "bg-gray-300 dark:bg-gray-700"}`}>
                     {
                         !post.author.isFollowedByMe ? <>
@@ -155,7 +212,7 @@ export default function PostCard({ post }) {
 
             <div className='flex-center mt-4'>
                 <div className='flex flex-col mx-[2px] lg:mx-1'>
-                  <button className='post-btn' >
+                  <button className='post-btn' onClick={toggleLike} >
                     {
                       !post.isLikedByMe ?
                         <>
@@ -231,7 +288,7 @@ export default function PostCard({ post }) {
                 <SharePost post={post} />
 
                 <div className='flex flex-col mx-[2px] lg:mx-1'>
-                  <button className='post-btn' >
+                  <button className='post-btn' onClick={toggleSave} >
                     {!post.isSavedByMe ? <><Save size={20} /> <span className='pl-1 text-[12px]'>Save</span></> :
                       <>
                         <><Save size={20} color='green' /> <span className='pl-1 text-[12px]'>Saved</span></>
