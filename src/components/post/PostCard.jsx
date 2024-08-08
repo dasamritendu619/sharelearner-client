@@ -1,6 +1,6 @@
 import React from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { useSelector, useDispatch } from 'react-redux'
+import { useSelector } from 'react-redux'
 import parse from 'html-react-parser'
 import { MessageSquareMore, Save, Star, UserRoundPlus } from 'lucide-react'
 import { likesService } from '@/apiServices/likesServices'
@@ -10,8 +10,9 @@ import { Skeleton } from "@/components/ui/skeleton"
 import SharePost from '@/components/post/SharePost'
 import { useToast } from '@/components/ui/use-toast'
 import { Button as Btn } from '@/components/ui/button'
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import ProfileCard from '../ProfileCard'
+import { useInView } from 'react-intersection-observer';
 
 import {
     Sheet,
@@ -23,15 +24,37 @@ import {
     SheetTrigger,
   } from "@/components/ui/sheet"
 
-export default function PostCard({ post, updatePosts }) {
+export default function PostCard({ post, updatePosts, onInView, isInView }) {
     //console.log(post)
     const user = useSelector(state => state.auth.user)
-    const dispatch = useDispatch()
     const { toast } = useToast()
     const navigate = useNavigate()
     const [profiles, setProfiles] = useState([])
     const [profileResData, setProfileResData] = useState(null)
+    const [isTitleExpanded,setIsTitleExpanded] = useState(false)
     const skeletons = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+    const title = post.title ? isTitleExpanded ? post.title : post.title.slice(0, 100) : ""
+    const videoRef = useRef(null);
+    const { ref, inView } = useInView({
+      threshold: 0.8, // Adjust this threshold as needed
+      triggerOnce: false,
+    });
+
+    useEffect(() => {
+      if (videoRef.current) {
+        if (inView) {
+          videoRef.current.play();
+        } else {
+          videoRef.current.pause();
+        }
+      }
+    }, [inView]);
+  
+    useEffect(() => {
+      if (inView) {
+        onInView();
+      }
+    }, [inView]);
 
 
     const toggleFollow = async () => {
@@ -122,7 +145,7 @@ export default function PostCard({ post, updatePosts }) {
                     <img src={post.author.avatar.replace("upload/", "upload/w_40/")} alt='avatar'
                         className='rounded-full w-10 h-10' />
                 </Link>
-                <p className='ml-2'>
+                <p className='m-0 py-1 ml-2'>
                     <Link to={`/user/${post.author.username}`} className='text-[14px] leading-3 mt-1 font-semibold block'>
                         {post.author.fullName}
                     </Link>
@@ -143,18 +166,24 @@ export default function PostCard({ post, updatePosts }) {
                 </button>
             </div>
             <div className=' ml-2 pt-1 pb-1'>
-                <p className=' leading-3 text-[11px] text-gray-500'>
+                <span className=' leading-3 text-[11px] text-gray-500 block'>
                     {new Date(post.createdAt).toDateString()}
-                </p>
-                <p className='font-semibold leading-5 text-[14px] lg:text-[16px]'>
-                    {post.title}
-                </p>
+                </span>
+                <span className='font-semibold block leading-5 text-[14px] lg:text-[16px]'>
+                    {title}
+                    {
+                      post.title && post.title.length > 100 && <span onClick={() => setIsTitleExpanded(!isTitleExpanded)} className='text-[12px] text-blue-600 underline cursor-pointer'>{isTitleExpanded ? '' : " ...Show more"}</span>
+                    }
+                </span>
             </div>
             <>
                 {
                     (post.type === 'blog' || post.forkedFrom?.type === 'blog') &&
                     <Link to={`/post/${post._id}`} className='overflow-hidden pt-2 block'>
+                      <div 
+                      className='dark:bg-gray-900 bg-gray-100 p-2 rounded-md max-h-[500px] overflow-y-hidden'>
                         {parse(post.type !== "forked" ? post.content : post.forkedFrom.content)}
+                      </div>
                     </Link>
                 }
 
@@ -177,9 +206,16 @@ export default function PostCard({ post, updatePosts }) {
 
                 {
                     (post.type === 'video' || post.forkedFrom?.type === 'video') &&
-                    <Link to={`/post/${post._id}`} className='pt-2 block'>
-                        <video src={post.type !== "forked" ? post.assetURL : post.forkedFrom.assetURL} controls className='mx-auto' ></video>
-                    </Link>
+                    <div className='pt-2 block' ref={ref}>
+                        <video 
+                        src={post.type !== "forked" ? post.assetURL : post.forkedFrom.assetURL} 
+                        controls 
+                        className='mx-auto'
+                        ref={videoRef}
+                        >
+                            Your browser does not support the video tag.
+                        </video>
+                    </div>
                 }
             </>
             {

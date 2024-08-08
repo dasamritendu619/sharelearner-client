@@ -6,8 +6,10 @@ import { BackgroundGradient } from "./ui/background-gradient"
 import { technologyUsed } from "../helper/helper"
 import { WavyBackground } from "./ui/wavy-background"
 import { AnimatedTooltip } from "./ui/animated-tooltip";
+import { useSelector } from "react-redux";
 
 function HomeNotLogin() {
+    const user = useSelector(state => state.auth.user)
     const instructors = [
         {
             id: 1,
@@ -55,12 +57,12 @@ function HomeNotLogin() {
                         className="mt-4 font-normal text-base text-gray-800 dark:text-neutral-400 max-w-lg mx-auto"
                     >Discover our innovative social media platform, where sharing your learnings and experiences takes center stage. Connect with a community eager to exchange knowledge, gain insights, and grow together. Whether you're mastering a new skill or sharing life lessons, our platform empowers you to inspire and be inspired. Join us and make every experience count!</p>
                     <div className="mt-4">
-                        <Link to={"/signup"}>
+                        <Link to={!user ? "/signup" : "/"}>
                             <Button
                                 borderRadius="1.75rem"
                                 className="bg-white dark:bg-black text-black dark:text-white border-neutral-200 dark:border-slate-800"
                             >
-                                Join Us Now
+                                {!user ? "Join Us Now" : "Go to home"}
                             </Button>
                         </Link>
                     </div>

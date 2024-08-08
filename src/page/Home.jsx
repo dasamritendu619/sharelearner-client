@@ -8,11 +8,11 @@ import PostCard from '@/components/post/PostCard'
 import { followersService } from '@/apiServices/followersServices'
 import { Skeleton } from '@/components/ui/skeleton'
 import ProfileCard from '@/components/ProfileCard'
-import { Button } from '@/components/ui/moving-border'
 import InfiniteScroll from 'react-infinite-scroll-component'
 import { Button as Btn } from '@/components/ui/button'
 import { BookOpen, Image, Video } from 'lucide-react'
-import { setSuggestedUsers,reValidateByKey } from '@/store/authSlice'
+import { setSuggestedUsers, reValidateByKey } from '@/store/authSlice'
+import { Button } from '@/components/ui/moving-border'
 
 
 export default function Home() {
@@ -23,6 +23,11 @@ export default function Home() {
   const ProfilesData = useSelector(state => state.auth.suggestedUsers)
   const [profileLoading, setProfileLoading] = useState(true)
   const skeletons = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+  const [currentVideoIndex, setCurrentVideoIndex] = useState(null);
+
+  const handleInView = (index) => {
+    setCurrentVideoIndex(index);
+  };
 
   const setProfiles = (profiles) => {
     dispatch(setSuggestedUsers({
@@ -167,38 +172,43 @@ export default function Home() {
         >
           {user && <div className='bg-white dark:bg-gray-800 rounded-lg shadow-lg px-2 py-3 sm:px-3 my-2 md:mr-2 lg:mx-2'>
             <div className='flex flex-nowrap justify-between'>
-                <Link to={`/user/${user.username}`}>
+              <Link to={`/user/${user.username}`}>
                 <img src={user.avatar.replace("upload/", "upload/w_40/")} alt='avatar'
-                        className='rounded-full w-10 h-10' /></Link>
-                <Link to={'/create-blog-post'}
+                  className='rounded-full w-10 h-10' /></Link>
+              <Link to={'/create-blog-post'}
                 className='w-[calc(100%-80px)] sm:w-[calc(100%-40px)] text-start mx-2 sm:mr-0'>
                 <Btn className='h-10 px-3 py-1 rounded-full w-full bg-gray-200 dark:bg-gray-700 text-start text-gray-500'>
-                    Write a blog here...
+                  Write a blog here...
                 </Btn>
-                </Link>
-                <Link to={'/create-photo-post'}
+              </Link>
+              <Link to={'/create-photo-post'}
                 className='sm:hidden bg-gray-200 dark:bg-gray-700 p-2 rounded-full'>
-                  <Image size={24} />
-                </Link>
+                <Image size={24} />
+              </Link>
             </div>
             <div className='hidden sm:block my-4 border-t dark:border-white'>
-              
+
             </div>
             <div className='hidden sm:flex sm:flex-nowrap sm:justify-center'>
-                <Link className='crpnavBtn' to={'/create-photo-post'} >
+              <Link className='crpnavBtn' to={'/create-photo-post'} >
                 <Image size={24} className='text-green-600 font-bold' /> <span className='pl-2 text-[14px]'>Photo</span>
-                </Link>
-                <Link className='crpnavBtn' to={'/create-video-post'}>
+              </Link>
+              <Link className='crpnavBtn' to={'/create-video-post'}>
                 <Video size={24} className='text-red-600 font-bold' /> <span className='pl-2 text-[14px]'>Video</span>
-                </Link>
-                <Link className='crpnavBtn' to={'/create-blog-post'}>
+              </Link>
+              <Link className='crpnavBtn' to={'/create-blog-post'}>
                 <BookOpen size={24} className='text-blue-600 font-bold' /> <span className='pl-2 text-[14px]'>Article</span>
-                </Link>
+              </Link>
             </div>
           </div>}
           {
-            postsData.posts.map(post => {
-              return <PostCard key={post._id} post={post} updatePosts={updatePosts} />
+            postsData.posts.map((post,index) => {
+              return <PostCard
+                key={post._id}
+                post={post}
+                updatePosts={updatePosts}
+                isInView={currentVideoIndex === index}
+                onInView={() => handleInView(index)} />
             })
           }
         </InfiniteScroll> :
@@ -231,12 +241,12 @@ export default function Home() {
 
       <div className='hidden md:block md:w-[40%] lg:w-[30%]  h-[calc(100vh-58px)]'>
         {user ? <>
-        <h2
-         className='text-center text-[18px] font-semibold py-4'
-        >
-          Suggested Profiles
-        </h2>
-        <hr />
+          <h2
+            className='text-center text-[18px] font-semibold py-4'
+          >
+            Suggested Profiles
+          </h2>
+          <hr />
           {
             profileLoading ? skeletons.map((i) => {
               return <div className="flex items-center space-x-4 pl-8 my-3 overflow-auto" key={i}>
@@ -249,8 +259,12 @@ export default function Home() {
             }) : <div className='pt-2 px-4 lg:px-3 xl:px-6 '>
               {
                 ProfilesData.docs.map((profile) => {
-                  return <ProfileCard profile={profile} key={profile._id} setProfiles={setProfiles} profiles={ProfilesData.docs} />
-                }) 
+                  return <ProfileCard
+                    profile={profile}
+                    key={profile._id}
+                    setProfiles={setProfiles}
+                    profiles={ProfilesData.docs} />
+                })
               }
               {
                 ProfilesData.docs.length === 0 && <div className='text-center py-6'>
@@ -269,13 +283,21 @@ export default function Home() {
 
             </div>
           }
-        </> : <div className='text-center py-6'>
-          <Button className='block mx-auto'>
-            <Link to='/login'>Login</Link>
-          </Button>
+        </> : <div className='text-center px-4 pt-2 pb-8'>
+          <div className='flex-center mt-6 lg:mt-10 mb-2'>
+            <Link to={"/signup"}>
+              <Button
+                borderRadius="1.75rem"
+                className="bg-white dark:bg-black text-black dark:text-white border-neutral-200 dark:border-slate-800"
+              >
+                Join Us Now
+              </Button>
+            </Link>
+          </div>
+          Please login to like, comment, share and save posts.
         </div>}
       </div>
-      
+
     </div>
   )
 }

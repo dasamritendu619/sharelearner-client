@@ -66,6 +66,8 @@ export default function PostPage() {
   const skeletons = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
   const [page, setPage] = useState(1)
   const deleteButtonRef = useRef(null)
+  const [isTitleExpanded, setIsTitleExpanded] = useState(false)
+  const title = post?.title ? isTitleExpanded ? post.title : post.title.slice(0, 60) : ""
 
   const isPostViewed = () => {
     for (let i = 0; i < viewedPosts.length; i++) {
@@ -139,9 +141,9 @@ export default function PostPage() {
     }
   }
 
-  const deletePost = async ()=>{
-     const responce = await postService.deletePost({postId})
-     if (responce.status < 400 && responce.data) {
+  const deletePost = async () => {
+    const responce = await postService.deletePost({ postId })
+    if (responce.status < 400 && responce.data) {
       dispatch(deleteAPost(postId))
       navigate('/');
     } else {
@@ -267,34 +269,39 @@ export default function PostPage() {
                       }
                     </button>
                   </div>
-                  <div className='border border-gray-600 border-y-0 px-4 mx-4 pt-3 pb-1'>
+                  <div className='border border-gray-600 border-y-0 px-4 mx-4 pt-1 pb-1'>
                     <p className=' leading-3 text-[11px] text-gray-500'>
                       {new Date(post.createdAt).toDateString()}
                     </p>
                     <div className='flex flex-nowrap justify-between'>
-                      <span className='font-semibold leading-5 text-[14px] w-[calc(100%-20px)] lg:text-[16px] block'>{post.title}</span>
+                      <span className='font-semibold leading-5 text-[14px] w-[calc(100%-20px)] lg:text-[16px] block'>
+                        {title}
+                        {
+                          post.title && post.title.length > 60 && <span onClick={() => setIsTitleExpanded(!isTitleExpanded)} className='text-[12px] text-blue-600 underline cursor-pointer'>{isTitleExpanded ? '' : " ...Show more"}</span>
+                        }
+                      </span>
                       {user && post.author._id === user._id && <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                                <button><EllipsisVertical size={18} /></button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end" className="w-40">
-                                <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                                <DropdownMenuSeparator />
-                                <DropdownMenuItem className=" cursor-pointer" onClick={() => navigate(`/update-post/${post._id}`)} title='Edit Reply'>
-                                    <Pencil className="mr-2 h-4 w-4" />
-                                    <span>Edit Post</span>
-                                </DropdownMenuItem>
-                                <DropdownMenuItem className=" cursor-pointer" onClick={()=>deleteButtonRef.current.click()}>
-                                    <Trash2 className="mr-2 h-4 w-4" />
-                                    <span>Delete Post</span>
-                                </DropdownMenuItem>
-                            </DropdownMenuContent>
-                        </DropdownMenu>}
+                        <DropdownMenuTrigger asChild>
+                          <button><EllipsisVertical size={18} /></button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end" className="w-40">
+                          <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                          <DropdownMenuSeparator />
+                          <DropdownMenuItem className=" cursor-pointer" onClick={() => navigate(`/update-post/${post._id}`)} title='Edit Reply'>
+                            <Pencil className="mr-2 h-4 w-4" />
+                            <span>Edit Post</span>
+                          </DropdownMenuItem>
+                          <DropdownMenuItem className=" cursor-pointer" onClick={() => deleteButtonRef.current.click()}>
+                            <Trash2 className="mr-2 h-4 w-4" />
+                            <span>Delete Post</span>
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>}
                     </div>
                   </div>
                   {
                     (post.type === 'blog' || post.forkedFrom[0]?.type === 'blog') &&
-                    <div className='px-2 sm:px-3 lg:px-4 py-2'>
+                    <div className='px-2 sm:px-3 lg:px-4 py-2 bg-gray-100 rounded-lg dark:bg-gray-800'>
                       {parse(post.type !== "forked" ? post.content : post.forkedFrom[0].content)}
                     </div>
                   }
@@ -324,7 +331,7 @@ export default function PostPage() {
             </div>
             <div className='w-full lg:w-[35%]'>
               <div className='hidden lg:flex lg:flex-nowrap lg:justify-end'>
-                <Btn onClick={() => navigate('/login')}
+                <Btn onClick={() => navigate('/')}
                   variant="outline" size="icon" className='my-2 mx-[3px] rounded-full bg-white dark:bg-gray-700 font-bold'>
                   <House size={20} />
                 </Btn>
@@ -348,32 +355,32 @@ export default function PostPage() {
               </div>
 
 
-              {post.forkedFrom[0] && post.forkedFrom[0].visibility==='public' && <div>
-              <div 
-                className='flex justify-start border-gray-600 lg:mt-2 flex-nowrap px-3 pt-2 border border-y-0 lg:border-t lg:border-b-0 mx-4'>
-                    <Link to={`/user/${post.forkedFrom[0].author.username}`}>
-                        <img src={post.forkedFrom[0].author.avatar.replace("upload/", "upload/w_40/")} alt='avatar'
-                            className='rounded-full w-10' />
+              {post.forkedFrom[0] && post.forkedFrom[0].visibility === 'public' && <div>
+                <div
+                  className='flex justify-start border-gray-600 lg:mt-2 flex-nowrap px-3 pt-2 border border-y-0 lg:border-t lg:border-b-0 mx-4'>
+                  <Link to={`/user/${post.forkedFrom[0].author.username}`}>
+                    <img src={post.forkedFrom[0].author.avatar.replace("upload/", "upload/w_40/")} alt='avatar'
+                      className='rounded-full w-10' />
+                  </Link>
+                  <p className='ml-2'>
+                    <Link to={`/user/${post.forkedFrom[0].author.username}`} className='text-[14px] leading-3 mt-1 font-semibold block'>
+                      {post.forkedFrom[0].author.fullName}
                     </Link>
-                    <p className='ml-2'>
-                        <Link to={`/user/${post.forkedFrom[0].author.username}`} className='text-[14px] leading-3 mt-1 font-semibold block'>
-                            {post.forkedFrom[0].author.fullName}
-                        </Link>
 
-                        <Link to={`/user/${post.forkedFrom[0].author.username}`} className='text-[10px] text-gray-400'>
-                            @{post.forkedFrom[0].author.username}
-                        </Link>
-                    </p>
-                    
+                    <Link to={`/user/${post.forkedFrom[0].author.username}`} className='text-[10px] text-gray-400'>
+                      @{post.forkedFrom[0].author.username}
+                    </Link>
+                  </p>
+
                 </div>
-                <Link to={`/post/${post.forkedFrom[0]._id}`} 
-                className='border border-gray-600 border-t-0 lg:border-y-0 px-4 mx-4 pt-3 pb-1 block'>
-                    <p className=' leading-3 text-[11px] text-gray-500'>
-                        {new Date(post.forkedFrom[0].createdAt).toDateString()}
-                    </p>
-                    <p className='font-semibold leading-5 text-[14px] lg:text-[16px]'>
-                        {post.forkedFrom[0].title}
-                    </p>
+                <Link to={`/post/${post.forkedFrom[0]._id}`}
+                  className='border border-gray-600 border-t-0 lg:border-y-0 px-4 mx-4 pt-3 pb-1 block'>
+                  <p className=' leading-3 text-[11px] text-gray-500'>
+                    {new Date(post.forkedFrom[0].createdAt).toDateString()}
+                  </p>
+                  <p className='font-semibold leading-5 text-[14px] lg:text-[16px]'>
+                    {post.forkedFrom[0].title}
+                  </p>
                 </Link>
               </div>}
 
@@ -534,11 +541,14 @@ export default function PostPage() {
 
                   </div> : <div className='text-center px-4 pt-2 pb-8'>
                     <div className='flex-center mt-6 lg:mt-10 mb-2'>
-                      <Button>
-                        <Link to="/login" className=''>
-                          Login now
-                        </Link>
-                      </Button>
+                      <Link to={"/signup"}>
+                        <Button
+                          borderRadius="1.75rem"
+                          className="bg-white dark:bg-black text-black dark:text-white border-neutral-200 dark:border-slate-800"
+                        >
+                          Join Us Now
+                        </Button>
+                      </Link>
                     </div>
                     Please login to like, comment, share and save posts.
                   </div>
@@ -549,24 +559,24 @@ export default function PostPage() {
             <div className="loader3"></div>
           </div>
       }
-          <AlertDialog>
-      <AlertDialogTrigger asChild>
-        <button className='hidden' ref={deleteButtonRef}>Show Dialog</button>
-      </AlertDialogTrigger>
-      <AlertDialogContent>
-        <AlertDialogHeader>
-          <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-          <AlertDialogDescription>
-            This action cannot be undone. This will permanently delete post
-             and remove your post data from our servers.
-          </AlertDialogDescription>
-        </AlertDialogHeader>
-        <AlertDialogFooter>
-          <AlertDialogCancel>Cancel</AlertDialogCancel>
-          <AlertDialogAction onClick={deletePost} className='bg-red-600 hover:bg-red-500 text-white'>Delete</AlertDialogAction>
-        </AlertDialogFooter>
-      </AlertDialogContent>
-    </AlertDialog>
+      <AlertDialog>
+        <AlertDialogTrigger asChild>
+          <button className='hidden' ref={deleteButtonRef}>Show Dialog</button>
+        </AlertDialogTrigger>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. This will permanently delete post
+              and remove your post data from our servers.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={deletePost} className='bg-red-600 hover:bg-red-500 text-white'>Delete</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </>
   )
 }
