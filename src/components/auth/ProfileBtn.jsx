@@ -1,4 +1,4 @@
-import React from 'react'
+import React,{memo} from 'react'
 import { Button } from "@/components/ui/button"
 import { Link, useNavigate } from 'react-router-dom'
 import {
@@ -18,7 +18,7 @@ import { useDispatch } from 'react-redux'
 import { logout } from '@/store/authSlice'
 import { useToast } from '../ui/use-toast'
 
-export default function ProfileBtn({className='my-2 ml-[3px] mr-1 sm:mr-2 xl:mr-12 rounded-full'}) {
+export default memo(function ProfileBtn({className='my-2 ml-[3px] mr-1 sm:mr-2 xl:mr-12 rounded-full'}) {
     const user = useSelector(state => state.auth.user)
     const navigate = useNavigate()
     const dispatch = useDispatch()
@@ -122,4 +122,4 @@ export default function ProfileBtn({className='my-2 ml-[3px] mr-1 sm:mr-2 xl:mr-
             </DropdownMenuContent>
         </DropdownMenu>
     )
-}
+})

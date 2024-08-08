@@ -13,6 +13,7 @@ import { Button as Btn } from '@/components/ui/button'
 import { BookOpen, Image, Video } from 'lucide-react'
 import { setSuggestedUsers, reValidateByKey } from '@/store/authSlice'
 import { Button } from '@/components/ui/moving-border'
+import SightNav from '@/components/SightNav'
 
 
 export default function Home() {
@@ -120,6 +121,8 @@ export default function Home() {
     if (user) {
       if (ProfilesData.docs.length < 1) {
         getSuggestedProfiles(1)
+      } else {
+        setProfileLoading(false)
       }
     }
   }, [user])
@@ -128,13 +131,11 @@ export default function Home() {
   return (
     <div
       className='w-screen flex flex-nowrap justify-center fixed h-[calc(100vh-94px)] sm:h-[calc(100vh-58px)] top-[94px] left-0 sm:top-[56px] overflow-y-auto'>
-      <div className='hidden lg:block lg:w-[25%]'>
-        <nav>
-          laura
-        </nav>
+      <div className='hidden lg:block lg:w-[30%] xl:w-[25%]'>
+        <SightNav />
       </div>
 
-      <div className='w-full md:w-[60%] lg:w-[45%]'>
+      <div className='w-full md:w-[60%] lg:w-[40%] xl:w-[50%]'>
         {postsData.posts.length > 0 ? <InfiniteScroll
           scrollableTarget='scrollableDiv'
           dataLength={postsData.posts.length}
@@ -177,7 +178,8 @@ export default function Home() {
                   className='rounded-full w-10 h-10' /></Link>
               <Link to={'/create-blog-post'}
                 className='w-[calc(100%-80px)] sm:w-[calc(100%-40px)] text-start mx-2 sm:mr-0'>
-                <Btn className='h-10 px-3 py-1 rounded-full w-full bg-gray-200 dark:bg-gray-700 text-start text-gray-500'>
+                <Btn 
+                className='h-10 px-3 py-1 rounded-full w-full bg-gray-200 hover:bg-gray-200 dark:bg-gray-700 text-start text-gray-500'>
                   Write a blog here...
                 </Btn>
               </Link>
@@ -239,10 +241,10 @@ export default function Home() {
 
       </div>
 
-      <div className='hidden md:block md:w-[40%] lg:w-[30%]  h-[calc(100vh-58px)]'>
+      <div className='hidden md:block md:w-[40%] lg:w-[30%] xl:w-[25%]  h-[calc(100vh-58px)]'>
         {user ? <>
           <h2
-            className='text-center text-[18px] font-semibold py-4'
+            className='text-center text-[20px] font-semibold py-4'
           >
             Suggested Profiles
           </h2>

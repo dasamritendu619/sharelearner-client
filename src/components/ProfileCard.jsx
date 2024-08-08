@@ -1,10 +1,10 @@
 import { followersService } from '@/apiServices/followersServices'
 import { UserRoundPlus } from 'lucide-react'
-import React from 'react'
+import React,{memo} from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 
-export default function profileCard({ profile, setProfiles, profiles }) {
+export default memo(function profileCard({ profile, setProfiles, profiles }) {
   // console.log(profile)
   const navigate = useNavigate();
   const user = useSelector((state) => state.auth.user);
@@ -70,4 +70,4 @@ export default function profileCard({ profile, setProfiles, profiles }) {
       </button>
     </div>
   )
-}
+})

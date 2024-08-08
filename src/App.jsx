@@ -34,7 +34,7 @@ function App() {
   }, [])
 
   return (
-    <ThemeProvider defaultTheme="syatem" storageKey="vite-ui-theme">
+    <ThemeProvider defaultTheme="system" storageKey="vite-ui-theme">
     {
       loading ? <OurLogo/> : 
       <div className='m-0 p-0'>

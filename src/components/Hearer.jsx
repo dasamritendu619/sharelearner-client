@@ -21,7 +21,7 @@ export default function Hearer() {
 
   return (
     <>
-    <header className='flex justify-between sm:border-b '>
+    <header className='flex justify-between sm:border-b bg-gray-50 dark:bg-gray-950'>
       <div className='flex flex-nowrap justify-start w-[50%] sm:w-[30%] md:w-[33%]'>
         <Link className='my-2 block'>
           <img src="/letter-s-modern-colorful-logo-business-s-letter-identity-logo-vector-design_135595-1206-removebg-preview-min.png"
@@ -30,11 +30,11 @@ export default function Hearer() {
         </Link>
         <Button title="Search..." onClick={() => navigate("/search")}
           variant="outline" size="icon" 
-          className='my-2 mx-[2px] p-2 rounded-full bg-white dark:bg-gray-700 font-bold hidden sm:block lg:hidden'>
+          className='my-2 mx-[2px] p-2 rounded-full bg-gray-200 hover:bg-gray-100 dark:bg-gray-700 font-bold hidden sm:block lg:hidden'>
           <Search size={20} />
         </Button>
         <Button title="Search..." onClick={() => navigate("/search")}
-          className='my-2 w-40 flex sm:hidden mx-[2px] rounded-full text-black dark:text-white bg-white dark:bg-gray-700 lg:flex flex-nowrap justify-between lg:w-56'>
+          className='my-2 w-40 flex sm:hidden mx-[2px] rounded-full text-black dark:text-white hover:bg-gray-100 bg-gray-200 dark:bg-gray-700 lg:flex flex-nowrap justify-between lg:w-56'>
           <span>Search...</span><Search size={18} />
         </Button>
       </div>
@@ -79,7 +79,7 @@ export default function Hearer() {
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button title="Create Post"
-              variant="outline" size="icon" className='my-2 mx-[2px] rounded-full bg-white dark:bg-gray-700 font-bold'>
+              variant="outline" size="icon" className='my-2 mx-[2px] rounded-full bg-gray-200 dark:bg-gray-700 font-bold'>
               <Plus size={20} />
             </Button>
           </DropdownMenuTrigger>
@@ -112,14 +112,14 @@ export default function Hearer() {
         <ModeToggle />
         {user ? <ProfileBtn className='my-2 ml-[4px] mr-1 md:mr-2 rounded-full' /> : 
         <Link to='/login' 
-        className='my-2 ml-[4px] mr-1 md:mr-2 rounded-full bg-white text-blue-600 dark:bg-gray-700 font-bold py-2 px-4'>
+        className='my-2 ml-[4px] mr-1 md:mr-2 rounded-full bg-gray-200 text-blue-600 dark:bg-gray-700 font-bold py-2 px-4'>
           Login
         </Link>
         }
       </div>
     </header>
 
-    <div className='flex flex-nowrap px-3 justify-between sm:hidden border-b'>
+    <div className='flex flex-nowrap px-3 justify-between sm:hidden border-b bg-gray-50 dark:bg-gray-950 border-t'>
     <NavLink to={'/'}
           className={({ isActive, isPending }) =>
             isActive ? "active nav-item2" : "nav-item2"

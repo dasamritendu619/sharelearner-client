@@ -1,4 +1,4 @@
-import React,{useState} from 'react'
+import React,{useState,memo} from 'react'
 import { Share2, Copy, ChevronDown } from 'lucide-react'
 import { useForm } from 'react-hook-form'
 import {
@@ -25,7 +25,7 @@ import { postService } from '@/apiServices/postServices'
 import { useNavigate } from 'react-router-dom'
 
 
-export default function SharePost({ post, className = 'mx-[2px] lg:mx-1' }) {
+export default memo(function SharePost({ post, className = 'mx-[2px] lg:mx-1' }) {
     const user = useSelector(state => state.auth.user)
     const { toast } = useToast()
     const [visibility, setVisibility] = useState("public")
@@ -141,4 +141,4 @@ export default function SharePost({ post, className = 'mx-[2px] lg:mx-1' }) {
             </button>
         </div>
     )
-}
+})

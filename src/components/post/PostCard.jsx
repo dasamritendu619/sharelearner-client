@@ -58,6 +58,7 @@ export default function PostCard({ post, updatePosts, onInView, isInView }) {
 
 
     const toggleFollow = async () => {
+      if(!user) return navigate('/login')
       if (updatePosts) {
         updatePosts({ ...post, 
           author: { ...post.author, 
@@ -78,6 +79,7 @@ export default function PostCard({ post, updatePosts, onInView, isInView }) {
     }
 
     const toggleLike = async () => {
+      if(!user) return navigate('/login')
       if (updatePosts) {
         updatePosts({ ...post, 
           isLikedByMe: !post.isLikedByMe,
@@ -97,6 +99,7 @@ export default function PostCard({ post, updatePosts, onInView, isInView }) {
     }
 
     const toggleSave = async () => {
+      if(!user) return navigate('/login')
       if (updatePosts) {
         updatePosts({ ...post, 
           isSavedByMe: !post.isSavedByMe,

@@ -10,12 +10,13 @@ import {
 } from "@/components/ui/select"
 import { Link, useNavigate } from 'react-router-dom'
 import { useToast } from '../ui/use-toast'
-import { useSelector } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
 import { Label } from '../ui/label'
 import { Input } from '../ui/input'
 import { Button } from '../ui/button'
 import { postService } from '@/apiServices/postServices'
 import { Progress } from "@/components/ui/progress"
+import { updateVideoPosts } from '@/store/postSlice'
 
 export default function AssetPostForm({ data, type }) {
   const user = useSelector(state => state.auth.user)
@@ -27,6 +28,7 @@ export default function AssetPostForm({ data, type }) {
   const [file, setFile] = useState(null)
   const [uploadPercentage, setUploadPercentage] = useState(0)
   const titleRef = useRef(null)
+  const dispatch = useDispatch()
 
   const updateProgress = (p) => {
     setUploadPercentage(p)
@@ -36,12 +38,12 @@ export default function AssetPostForm({ data, type }) {
     // console.log(titleRef.current.value)
     // console.log(value)
     console.log(file)
-    if(!file){
+    if (!file) {
       return toast({
         variant: "destructive",
         title: "File is required!",
         description: "Please upload a file to create a post.",
-      }) 
+      })
     }
     setUploadPercentage(1)
     let response;
@@ -57,7 +59,7 @@ export default function AssetPostForm({ data, type }) {
         visibility: value,
         asset: file,
         type: type,
-        updateProgress:updateProgress
+        updateProgress: updateProgress
       })
     }
     if (!response.data || response.status >= 400) {
@@ -70,13 +72,19 @@ export default function AssetPostForm({ data, type }) {
     } else {
       toast({
         variant: "success",
-        className:"bg-green-500",
+        className: "bg-green-500",
         title: "Post created successfully!",
         description: "Your post has been created successfully.",
       })
+      if (type === "video") {
+        dispatch(updateVideoPosts({
+          posts: [],
+          page: 1,
+          nextPage: null,
+        }))
+      }
       navigate(`/post/${response.data._id}`)
     }
-
   }
 
 
@@ -102,11 +110,11 @@ export default function AssetPostForm({ data, type }) {
           </p>
         </div>
         <div className='md:w-[50%] w-full mt-8'>
-            <Button className="block mx-auto bg-green-500 hover:bg-green-600"
+          <Button className="block mx-auto bg-green-500 hover:bg-green-600"
             onClick={handleSubmit}
-            >
-              {data ? "Update Post" : "Create Post"}
-            </Button>
+          >
+            {data ? "Update Post" : "Create Post"}
+          </Button>
         </div>
       </div>
 
@@ -136,7 +144,7 @@ export default function AssetPostForm({ data, type }) {
           defaultValue={data ? data.title : ''}
           placeholder="Enter your post title here."
           className="mb-6"
-          ref={titleRef} 
+          ref={titleRef}
         />
       </div>
       <div>
@@ -144,7 +152,7 @@ export default function AssetPostForm({ data, type }) {
           className='h-auto px-4 sm:px-0 sm:h-[55vh] block mx-auto mb-6' />}
         {type === "video" && fileUrl && <video src={fileUrl} controls
           className='h-auto px-4 sm:px-0 sm:h-[55vh] block mx-auto mb-6' />}
-        {type === "pdf" && fileUrl &&  <iframe src={fileUrl} title="pdf" 
+        {type === "pdf" && fileUrl && <iframe src={fileUrl} title="pdf"
           className=' h-[500px] w-[96%] md:w-[90%] block mx-auto mb-6' />}
       </div>
       <input type="file" name="file" id="file" accept={
@@ -157,23 +165,23 @@ export default function AssetPostForm({ data, type }) {
         onChange={(e) => {
           setFileUrl(URL.createObjectURL(e.target.files[0]))
           setFile(e.target.files[0])
-          }} />
+        }} />
 
       {!data && <Button onClick={() => inputRef.current.click()}
         className=' w-40 block mx-auto mb-10'>
         {fileUrl ? "Change" : "Upload"} {type}
       </Button>}
-      {uploadPercentage > 0 && 
-      <div className='w-screen h-screen bg-opacity-60 dark:bg-opacity-80 bg-black fixed top-0 left-0 grid place-content-center'>
-        <div>
-          <p className='text-center text-white'>
-            {uploadPercentage !==100 ? uploadPercentage : 98} %
-          </p>
-        <Progress value={uploadPercentage !==100 ? uploadPercentage : 98} className="w-[90vw] sm:w-72 lg:w-96" />
-        <p className='text-center mt-3 text-white'>
-          Uploading...
-        </p>
-        </div>
+      {uploadPercentage > 0 &&
+        <div className='w-screen h-screen bg-opacity-60 dark:bg-opacity-80 bg-black fixed top-0 left-0 grid place-content-center'>
+          <div>
+            <p className='text-center text-white'>
+              {uploadPercentage !== 100 ? uploadPercentage : 98} %
+            </p>
+            <Progress value={uploadPercentage !== 100 ? uploadPercentage : 98} className="w-[90vw] sm:w-72 lg:w-96" />
+            <p className='text-center mt-3 text-white'>
+              Uploading...
+            </p>
+          </div>
         </div>}
     </div>
   )

@@ -41,7 +41,7 @@ export {
     Chat, // under construction
     SearchPage, // under construction
     ProfilesPage, // under construction
-    BlogsPage, // under construction
-    VideosPage, // under construction
-    SavedPosts, // under construction
+    BlogsPage, 
+    VideosPage, 
+    SavedPosts,
 }
