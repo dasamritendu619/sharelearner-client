@@ -120,7 +120,7 @@ export default function PostCard({ post, updatePosts }) {
             <div className='flex justify-start flex-nowrap'>
                 <Link to={`/user/${post.author.username}`}>
                     <img src={post.author.avatar.replace("upload/", "upload/w_40/")} alt='avatar'
-                        className='rounded-full w-10' />
+                        className='rounded-full w-10 h-10' />
                 </Link>
                 <p className='ml-2'>
                     <Link to={`/user/${post.author.username}`} className='text-[14px] leading-3 mt-1 font-semibold block'>

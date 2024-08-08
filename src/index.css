@@ -79,6 +79,10 @@
     @apply flex items-center flex-nowrap justify-center;
   }
 
+  .flex-between {
+    @apply flex items-center flex-nowrap justify-between;
+  }
+
   .post-btn{
     @apply flex-center border-x-[1px] dark:border-white border-black border-y-[1px] rounded-full px-3 py-1 hover:bg-gray-300 dark:hover:bg-gray-700;
   }
@@ -123,7 +127,7 @@
   }
 
 
-  @media (min-width: 640px) {
+  @media (min-width: 540px) {
     ::-webkit-scrollbar {
       width: 10px;
     }
@@ -144,4 +148,8 @@
     ::-webkit-scrollbar-thumb:hover {
       background: #616161; 
     }
+}
+
+.crpnavBtn{
+  @apply flex-center mx-6;
 }

@@ -4,7 +4,7 @@ import React from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 
-export default function profileCard({ profile, setProfiles }) {
+export default function profileCard({ profile, setProfiles, profiles }) {
   // console.log(profile)
   const navigate = useNavigate();
   const user = useSelector((state) => state.auth.user);
@@ -14,19 +14,35 @@ export default function profileCard({ profile, setProfiles }) {
       navigate('/login');
       return;
     }
-    setProfiles((prev) =>
-      prev.map((p) => {
+    if (profiles) {
+      const newProfiles = profiles.map((p) => {
         if (p._id === profile._id) {
-          return { ...p, isFollowedByMe: !p.isFollowedByMe };
+          return { ...p, 
+            isFollowedByMe: !p.isFollowedByMe,
+            followersCount: p.isFollowedByMe ? p.followersCount - 1 : p.followersCount + 1
+          };
         }
         return p;
-      })
-    );
+      });
+      setProfiles(newProfiles);
+    } else {
+      setProfiles((prev) =>
+        prev.map((p) => {
+          if (p._id === profile._id) {
+            return { ...p, 
+              isFollowedByMe: !p.isFollowedByMe,
+              followersCount: p.isFollowedByMe ? p.followersCount - 1 : p.followersCount + 1
+            };
+          }
+          return p;
+        })
+      );
+    }
     await followersService.toggleFollowUser({ profileId: profile._id });
   }
 
   return (
-    <div className='flex justify-between flex-nowrap py-2' title={`${profile.followersCount} Followers`}>
+    <div className='flex justify-between flex-nowrap py-2' >
       <div className=' flex flex-nowrap justify-start'>
       <Link to={`/user/${profile.username}`}>
         <img src={profile.avatar.replace("upload/", "upload/w_70/")} alt='avatar'
@@ -38,7 +54,7 @@ export default function profileCard({ profile, setProfiles }) {
         </Link>
 
         <Link to={`/user/${profile.username}`} className=' text-[10px] sm:text-[12px] text-gray-400'>
-          @{profile.username}
+          {profile.followersCount} Followers
         </Link>
       </p>
       </div>
