@@ -213,7 +213,7 @@ export default function PostCard({ post, updatePosts, onInView, isInView }) {
                         <video 
                         src={post.type !== "forked" ? post.assetURL : post.forkedFrom.assetURL} 
                         controls 
-                        className='mx-auto'
+                        className='mx-auto max-h-[500px] lg:max-h-[550px]'
                         ref={videoRef}
                         >
                             Your browser does not support the video tag.

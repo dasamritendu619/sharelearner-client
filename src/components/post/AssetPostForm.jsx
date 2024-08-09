@@ -37,7 +37,7 @@ export default function AssetPostForm({ data, type }) {
   const handleSubmit = async () => {
     // console.log(titleRef.current.value)
     // console.log(value)
-    console.log(file)
+    //console.log(file)
     if (!file) {
       return toast({
         variant: "destructive",

@@ -49,11 +49,15 @@ const routes = createBrowserRouter(
 
       <Route path="search" element={<SearchPage />} />
 
-      <Route path="profiles" element={<ProfilesPage />} />
-
       <Route path="blogs" element={<BlogsPage />} />
 
       <Route path="videos" element={<VideosPage />} />
+
+      <Route path="profiles" element={
+        <AuthLayout authentication={true}>
+          <ProfilesPage />
+        </AuthLayout>
+      } />
 
       <Route path="chat" element={
         <AuthLayout authentication={true}>
