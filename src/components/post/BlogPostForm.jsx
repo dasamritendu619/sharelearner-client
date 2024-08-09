@@ -66,8 +66,8 @@ export default function BlogPostForm({ data }) {
       toast({
         variant: "success",
         className: "bg-green-500",
-        title: "Post created successfully!",
-        description: "Your post has been created successfully.",
+        title: "Success",
+        description: response.message || "Post created successfully!",
       })
       setUploadPercentage(100)
       dispatch(updateBlogPosts({

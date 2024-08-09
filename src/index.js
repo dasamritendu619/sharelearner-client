@@ -37,7 +37,7 @@ export {
     SupportPage, // under construction
     TermsPage, // under construction
     FeedbackPage, // under construction
-    ProfilePage, // under construction
+    ProfilePage,
     Chat, // under construction
     SearchPage, // under construction
     ProfilesPage, // under construction

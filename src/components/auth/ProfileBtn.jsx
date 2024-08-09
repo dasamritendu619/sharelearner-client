@@ -17,6 +17,8 @@ import { authService } from '@/apiServices/authServices'
 import { useDispatch } from 'react-redux'
 import { logout } from '@/store/authSlice'
 import { useToast } from '../ui/use-toast'
+import { reValidateByKey } from '@/store/authSlice'
+import { revalidateByKey as revalidatePosts } from '@/store/postSlice'
 
 export default memo(function ProfileBtn({className='my-2 ml-[3px] mr-1 sm:mr-2 xl:mr-12 rounded-full'}) {
     const user = useSelector(state => state.auth.user)
@@ -38,6 +40,8 @@ export default memo(function ProfileBtn({className='my-2 ml-[3px] mr-1 sm:mr-2 x
             localStorage.removeItem("accessToken");
             localStorage.removeItem("refreshToken");
             dispatch(logout());
+            reValidateByKey('all');
+            revalidatePosts('all');
         }
     }
     return (

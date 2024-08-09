@@ -38,13 +38,6 @@ export default function AssetPostForm({ data, type }) {
     // console.log(titleRef.current.value)
     // console.log(value)
     //console.log(file)
-    if (!file) {
-      return toast({
-        variant: "destructive",
-        title: "File is required!",
-        description: "Please upload a file to create a post.",
-      })
-    }
     setUploadPercentage(1)
     let response;
     if (data) {
@@ -54,6 +47,13 @@ export default function AssetPostForm({ data, type }) {
         postId: data._id,
       })
     } else {
+      if (!file) {
+        return toast({
+          variant: "destructive",
+          title: "File is required!",
+          description: "Please upload a file to create a post.",
+        })
+      }
       response = await postService.createPost({
         title: titleRef.current.value,
         visibility: value,
@@ -73,8 +73,8 @@ export default function AssetPostForm({ data, type }) {
       toast({
         variant: "success",
         className: "bg-green-500",
-        title: "Post created successfully!",
-        description: "Your post has been created successfully.",
+        title: "Success",
+        description: response.message || "Post created successfully!",
       })
       if (type === "video") {
         dispatch(updateVideoPosts({
