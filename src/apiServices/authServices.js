@@ -310,16 +310,16 @@ export class AuthService {
     }
 
 
-    async updateAvatar({avatarUrl}) {
+    async updateAvatar({avatar}) {
         const accessToken = localStorage.getItem('accessToken');
         const refreshToken = localStorage.getItem('refreshToken');
         try {
-            if (!avatarUrl) {
+            if (!avatar) {
                 throw new Error(400, "Avatar URL is required");
             }
-            const response = await axios.patch(`${conf.backendUrl}/api/v1/user/update-avatar`,{
-                avatarUrl
-            },{
+            const formData = new FormData();
+            formData.append('avatar',avatar,'avatar.jpeg');
+            const response = await axios.patch(`${conf.backendUrl}/api/v1/user/update-avatar`,formData,{
                 headers:{   
                     Authorization:`Bearer ${accessToken} ${refreshToken}`
                 }
@@ -332,16 +332,16 @@ export class AuthService {
     }
 
 
-    async updateCoverPhoto({coverPhotoUrl}) {
+    async updateCoverPhoto({coverPhoto}) {
         const accessToken = localStorage.getItem('accessToken');
         const refreshToken = localStorage.getItem('refreshToken');
         try {
-            if (!coverPhotoUrl) {
+            if (!coverPhoto) {
                 throw new Error(400, "Cover Photo URL is required");
             }
-            const response = await axios.patch(`${conf.backendUrl}/api/v1/user/update-cover-photo`,{
-                coverPhotoUrl
-            },{
+            const formData = new FormData();
+            formData.append('coverPhoto',coverPhoto,'coverPhoto.jpeg');
+            const response = await axios.patch(`${conf.backendUrl}/api/v1/user/update-cover-photo`,formData,{
                 headers:{
                     Authorization:`Bearer ${accessToken} ${refreshToken}`
                 }

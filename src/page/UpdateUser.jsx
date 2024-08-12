@@ -190,7 +190,7 @@ export default function UpdateUser() {
               <CardContent className="space-y-2">
                 <div className="space-y-1">
                   <Label htmlFor="fullName">Full Name</Label>
-                  <Input id="fullName" defaultValue={userDetails?.fullName || ""}
+                  <Input id="fullName" defaultValue={userDetails?.fullName || ""} type="text"
                   {...register("fullName", { required: true })}
                   required
                   />
@@ -267,7 +267,7 @@ export default function UpdateUser() {
                 <div className="space-y-1">
                   <Label htmlFor="l1" className='flex flex-nowrap justify-start'>
                     <Github className=" scale-75" /> <span className="block mt-1">Github Profile Link</span></Label>
-                  <Input id="l1" placeholder="github.com/username"
+                  <Input id="l1" placeholder="github.com/username" type="url"
                   {...register("github")} defaultValue={userDetails?.links[0] || ""}
                   />
                 </div>
@@ -275,7 +275,7 @@ export default function UpdateUser() {
                 <div className="space-y-1">
                   <Label htmlFor="l2" className='flex flex-nowrap justify-start'>
                   <Linkedin className=" scale-75" /> <span className="block mt-1">Linkedin Profile Link</span></Label>
-                  <Input id="l2" placeholder="linkedin.com/username"
+                  <Input id="l2" placeholder="linkedin.com/username" type='url'
                   {...register("linkedin")} defaultValue={userDetails?.links[1] || ""}
                   />
                 </div>
@@ -283,7 +283,7 @@ export default function UpdateUser() {
                 <div className="space-y-1">
                   <Label htmlFor="l3" className='flex flex-nowrap justify-start'>
                     <BriefcaseBusiness className=" scale-75" /> <span className="block mt-1">Your Portfolio Link</span></Label>
-                  <Input id="l3" placeholder="yourwebsite.com"
+                  <Input id="l3" placeholder="yourwebsite.com" type='url'
                   {...register("portfolio")} defaultValue={userDetails?.links[2] || ""}
                   />
                 </div>

@@ -162,6 +162,7 @@ export default function AssetPostForm({ data, type }) {
               ""}
         ref={inputRef}
         className='hidden'
+        multiple={false}
         onChange={(e) => {
           setFileUrl(URL.createObjectURL(e.target.files[0]))
           setFile(e.target.files[0])
