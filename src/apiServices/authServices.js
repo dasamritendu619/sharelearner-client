@@ -368,6 +368,25 @@ export class AuthService {
     }
 
 
+    async getProfile({username}) {
+        const accessToken = localStorage.getItem('accessToken');
+        const refreshToken = localStorage.getItem('refreshToken');
+        try {
+            if(!username){
+                throw new Error('username is required');
+            }
+            const response = await axios.get(`${conf.backendUrl}/api/v1/user/${username}`,{
+                headers:{
+                    Authorization:`Bearer ${accessToken} ${refreshToken}`
+                }
+            });
+            return response.data;
+        } catch (error) {
+            console.log("Error in getProfile",error);
+            return {status:error.status || 400,message:error.message || "Something Went Wrong!",data:null};
+        }
+    }
+
 
 }
 

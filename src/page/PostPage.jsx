@@ -68,6 +68,8 @@ export default function PostPage() {
   const deleteButtonRef = useRef(null)
   const [isTitleExpanded, setIsTitleExpanded] = useState(false)
   const title = post?.title ? isTitleExpanded ? post.title : post.title.slice(0, 60) : ""
+  console.log(post);
+  console.log(viewedPosts)
 
   const isPostViewed = () => {
     for (let i = 0; i < viewedPosts.length; i++) {

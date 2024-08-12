@@ -259,7 +259,9 @@ export default function SearchPage() {
                   </>
                 }
                 endMessage={
-                  <p className='w-full text-center font-bold my-12 text-lg'>🥺 No Post Found</p>
+                  
+                    postData.docs.length === 0 ? <p className='w-full text-center font-bold my-12 text-lg'>🥺 No Post Found</p> :
+                    <p className='w-full text-center font-bold my-12 text-lg'>Yay! You have seen it all</p>
                 }
               >
                 <div className='w-full flex flex-nowrap justify-center'>

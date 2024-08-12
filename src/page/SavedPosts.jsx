@@ -23,6 +23,7 @@ export default function SavedPosts() {
   const { toast } = useToast()
   const ProfilesData = useSelector(state => state.auth.suggestedUsers)
   const [profileLoading, setProfileLoading] = useState(true)
+  const [postsLoading, setPostsLoading] = useState(true)
   const skeletons = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
   const [currentVideoIndex, setCurrentVideoIndex] = useState(null);
 
@@ -87,6 +88,7 @@ export default function SavedPosts() {
           page: response.data.page,
           nextPage: response.data.nextPage,
         }))
+        setPostsLoading(false)
       } else {
         dispatch(updateSavedPosts({
           posts: [...postsData.posts, ...response.data.docs],
@@ -113,6 +115,7 @@ export default function SavedPosts() {
 
   useEffect(() => {
     if (postsData.posts.length === 0) {
+      setPostsLoading(true)
       getPosts(1)
     }
   }, [])
@@ -136,7 +139,7 @@ export default function SavedPosts() {
       </div>
 
       <div className='w-full md:w-[60%] lg:w-[40%] xl:w-[50%]'>
-        {postsData.posts.length > 0 ? <InfiniteScroll
+        {!postsLoading > 0 ? <InfiniteScroll
           scrollableTarget='scrollableDiv'
           dataLength={postsData.posts.length}
           next={() => getPosts(postsData.page + 1)}
@@ -168,7 +171,12 @@ export default function SavedPosts() {
             </>
           }
           endMessage={
-            <p className='w-full text-center font-semibold my-4'>No More Posts</p>
+            postsData.posts.length > 0 ? <p className='text-center text-lg font-bold my-12'>
+              🙂 You have seen all saved posts.
+            </p> : 
+            <p className='text-center text-lg font-bold my-12'>
+              😑 You have not saved any posts yet.
+            </p>
           }
         >
           {user && <div className='bg-white dark:bg-gray-800 rounded-lg shadow-lg px-2 py-3 sm:px-3 my-2 md:mr-2 lg:mx-2'>

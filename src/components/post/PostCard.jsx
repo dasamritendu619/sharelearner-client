@@ -210,7 +210,7 @@ export default function PostCard({ post, updatePosts, onInView, isInView }) {
                 {
                     (post.type === 'video' || post.forkedFrom?.type === 'video') &&
                     <div className='pt-2 block' ref={ref}>
-                        <video 
+                        <video
                         src={post.type !== "forked" ? post.assetURL : post.forkedFrom.assetURL} 
                         controls 
                         className='mx-auto max-h-[500px] lg:max-h-[550px]'

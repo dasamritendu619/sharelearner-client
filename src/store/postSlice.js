@@ -2,6 +2,7 @@ import { createSlice } from '@reduxjs/toolkit'
 
 const initialState = {
     viewedPosts: [],
+    viewedProfiles: [],
     homePosts: {
         posts:[],
         page: 1,
@@ -29,11 +30,24 @@ export const postSlice = createSlice({
     initialState,
     reducers: {
         viewPost: (state, action) => {
-            state.viewedPosts.push(action.payload)
+            const index = state.viewedPosts.findIndex(post => post._id === action.payload._id)
+            if(index === -1){
+                state.viewedPosts.push(action.payload)
+            }
         },
         updateViewedPost: (state, action) => {
             const index = state.viewedPosts.findIndex(post => post._id === action.payload._id)
             state.viewedPosts[index] = action.payload
+        },
+        viewProfile: (state, action) => {
+            const index = state.viewedProfiles.findIndex(profile => profile.username === action.payload.username)
+            if(index === -1){
+                state.viewedProfiles.push(action.payload)
+            }
+        },
+        updateViewedProfiles: (state, action) => {
+            const index = state.viewedProfiles.findIndex(profile => profile.username === action.payload.username)
+            state.viewedProfiles[index] = action.payload
         },
         updateHpmePosts: (state, action) => {
             state.homePosts = action.payload
@@ -74,6 +88,7 @@ export const postSlice = createSlice({
                     nextPage: null,
                 }
                 state.viewedPosts = []
+                state.viewedProfiles = []
             } else if(key === 'homePosts'){
                 state.homePosts = {
                     posts:[],
@@ -100,6 +115,8 @@ export const postSlice = createSlice({
                 }
             } else if(key === 'viewedPosts'){
                 state.viewedPosts = []
+            } else if(key === 'viewedProfiles'){
+                state.viewedProfiles = []
             }
         }
     },
@@ -114,6 +131,8 @@ export const {
     updateSavedPosts,
     deleteAPost,
     revalidateByKey,
+    viewProfile,
+    updateViewedProfiles,
  } = postSlice.actions;
 
 export default postSlice.reducer;

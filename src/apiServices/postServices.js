@@ -163,6 +163,26 @@ export class PostService{
             return {status:error.status || 400,message:error.message || "Something Went Wrong!",data:null};
         }
     }
+
+
+    async getProfilePosts({username,page=1,limit=10,type='all'}){
+        const accessToken = localStorage.getItem('accessToken');
+        const refreshToken = localStorage.getItem('refreshToken');
+        try {
+            if(!username){
+                throw new Error(400, "Username is required to get profile posts");
+            }
+            const response = await axios.get(`${conf.backendUrl}/api/v1/post/profile/${username}?page=${page}&limit=${limit}&type=${type}`,{
+                headers: {
+                    Authorization: `Bearer ${accessToken} ${refreshToken}`,
+                }
+            });
+            return response.data;
+        } catch (error) {
+            console.log("Error in getting profile posts " ,error);
+            return {status:error.status || 400,message:error.message || "Something Went Wrong!",data:null};
+        }
+    }
 }
 
 

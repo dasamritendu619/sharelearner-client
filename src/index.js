@@ -39,7 +39,7 @@ export {
     FeedbackPage, // under construction
     ProfilePage,
     Chat, // under construction
-    SearchPage, // under construction
+    SearchPage,
     ProfilesPage, // under construction
     BlogsPage, 
     VideosPage, 
