@@ -206,3 +206,15 @@ h6 {
 .profailsContainer{
   @apply w-full;
 }
+
+.proBth {
+  @apply text-blue-600 text-sm font-semibold mx-3 min-[450px]:mx-4 my-2 md:my-4 sm:font-bold md:mx-8 md:text-[16px];
+}
+
+.tab {
+  @apply px-2 py-3 md:px-4 hover:bg-blue-200 font-semibold dark:hover:bg-gray-800 hover:border-t-2 border-blue-600 dark:border-green-600;
+}
+
+.activeTab {
+  @apply border-blue-600 dark:border-green-600 border-t-2 text-blue-600 dark:text-green-600;
+}

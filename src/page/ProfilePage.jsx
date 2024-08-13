@@ -10,6 +10,15 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { Button } from "@/components/ui/button"
 import CorpEditor from '@/components/CorpEditor'
 import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet"
+import {
   Dialog,
   DialogClose,
   DialogContent,
@@ -19,7 +28,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
-import { Eye, Upload } from 'lucide-react'
+import { Cake, Eye, GraduationCap, MessageCircleHeart, Smile, Upload, MapPin, UserRoundPlus, Send, Pencil, UserCheck } from 'lucide-react'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -32,13 +41,22 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
 
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
+import ProfileCard from '@/components/ProfileCard'
+import { followersService } from '@/apiServices/followersServices'
+
 // profile Tabs :- Posts, Photos, Videos, blogs, Shared, Private, PDF
 
 export default function ProfilePage() {
   const { username } = useParams();
   const searchParams = new URLSearchParams(window.location.search);
-  const [followers, setFollowers] = useState([]);
-  const [following, setFollowing] = useState([]);
+  const [followers, setFollowers] = useState({ docs: [], page: 1, nextPage: null, loading: true });
+  const [following, setFollowing] = useState({ docs: [], page: 1, nextPage: null, loading: true });
   const [profile, setProfile] = useState(null);
   const [postsLoading, setPostsLoading] = useState(true);
   const viewedProfiles = useSelector(state => state.post.viewedProfiles);
@@ -49,12 +67,12 @@ export default function ProfilePage() {
   const navigate = useNavigate();
   const tabs = {
     posts: 'all',
-    Photos: 'photo',
+    photos: 'photo',
     videos: 'video',
     blogs: 'blog',
-    Shared: 'forked',
-    Private: 'private',
-    PDF: 'pdf',
+    shared: 'forked',
+    private: 'private',
+    pdf: 'pdf',
   }
   const coverCloseRef = useRef(null);
   const coverOpenRef = useRef(null);
@@ -68,8 +86,77 @@ export default function ProfilePage() {
   // console.log(profile)
   // console.log(viewedProfiles)
 
+  const toggleFollow = async () => {
+    if (!user || !profile.profile) {
+      return navigate('/login');
+    } 
+    const updatedProfile = {
+      ...profile,
+      profile: {
+        ...profile.profile,
+        isFollowedByMe: !profile.profile.isFollowedByMe,
+        followersCount: profile.profile.isFollowedByMe ? profile.profile.followersCount - 1 : profile.profile.followersCount + 1
+      }
+    }
+    setProfile(updatedProfile);
+    dispatch(updateViewedProfiles(updatedProfile));
+    await followersService.toggleFollowUser({ profileId: profile.profile._id });
+  }
+
+  const updateFollowers = (profiles) => {
+    setFollowers({
+      ...followers,
+      docs: profiles
+    })
+  }
+
+  const updateFollowings = (profiles) => {
+    setFollowing({
+      ...following,
+      docs: profiles
+    })
+  }
+
+  const getFollowers = async (page) => {
+    const limit = 20;
+    const response = await followersService.getAllFollowers({ username: username, page: page, limit: limit });
+    // console.log(response)
+    if (response.status < 400 && response.data) {
+      if (page === 1) {
+        setFollowers({ docs: response.data.docs, page: response.data.page, nextPage: response.data.nextPage, loading: false });
+      } else {
+        setFollowers({ docs: [...followers.docs, ...response.data.docs], page: response.data.page, nextPage: response.data.nextPage, loading: false });
+      }
+    } else {
+      toast({
+        title: "Failed to get Followers",
+        description: response.message,
+        variant: "destructive",
+      })
+    }
+  }
+
+  const getFollowings = async (page) => {
+    const limit = 20;
+    const response = await followersService.getAllFollowings({ username: username, page: page, limit: limit });
+    // console.log(response)
+    if (response.status < 400 && response.data) {
+      if (page === 1) {
+        setFollowing({ docs: response.data.docs, page: response.data.page, nextPage: response.data.nextPage, loading: false });
+      } else {
+        setFollowing({ docs: [...following.docs, ...response.data.docs], page: response.data.page, nextPage: response.data.nextPage, loading: false });
+      }
+    } else {
+      toast({
+        title: "Failed to get Followings",
+        description: response.message,
+        variant: "destructive",
+      })
+    }
+  }
+
   const updateAvatar = async (image) => {
-    if (!image ) {
+    if (!image) {
       toast({
         title: "Failed to upload Avatar",
         description: "Please select an image to upload",
@@ -102,7 +189,7 @@ export default function ProfilePage() {
   }
 
   const updateCover = async (image) => {
-    if (!image ) {
+    if (!image) {
       toast({
         title: "Failed to upload Cover Photo",
         description: "Please select an image to upload",
@@ -249,7 +336,7 @@ export default function ProfilePage() {
         if (foundedProfile) {
           if (currentTab === 'posts') {
             await getPosts(1, 'all', foundedProfile);
-          } else if (currentTab === 'Photos') {
+          } else if (currentTab === 'photos') {
             await getPosts(1, 'photo', foundedProfile);
           } else if (currentTab === 'videos') {
             await getPosts(1, 'video', foundedProfile);
@@ -283,7 +370,7 @@ export default function ProfilePage() {
 
   return (
     <div className='w-screen fixed top-14 left-0 bg-blue-100 dark:bg-gray-950 flex flex-nowrap justify-center'>
-      <div className='hidden lg:block lg:w-[250px]'>
+      <div className='hidden lg:block lg:w-[250px] border-gray-500 border-r h-[calc(100vh-56px)]'>
         <SightNav />
       </div>
       <div className='w-full lg:w-[calc(100%-250px)]'>
@@ -291,149 +378,424 @@ export default function ProfilePage() {
           profile ?
             <div className='w-full'>
               <div className='w-full relative'>
-              {user.username === username ? <Dialog>
-                <DialogTrigger asChild>
-                  <button>
-                    <img src={profile.profile.coverPhoto.replace("upload/", "upload/q_60/")} 
-                    alt="photo" 
-                    className='w-full aspect-[4/1] md:aspect-[5/1] xl:aspect-[6/1] block' />
-                  </button>
-                </DialogTrigger>
-                <DialogContent className="sm:max-w-[425px]">
-                  <DialogHeader>
-                    <DialogTitle>Your Cover Photo</DialogTitle>
-                  </DialogHeader>
-                  <div className="grid gap-4 py-4">
-                        <Button className='flex flex-nowrap justify-center'
+                {user.username === username ? <Dialog>
+                  <DialogTrigger asChild>
+                    <button className='block w-full'>
+                      <img src={profile.profile.coverPhoto.replace("upload/", "upload/q_60/")}
+                        alt="photo"
+                        className='w-full aspect-[4/1] md:aspect-[5/1] xl:aspect-[6/1] block' />
+                    </button>
+                  </DialogTrigger>
+                  <DialogContent className="sm:max-w-[425px]">
+                    <DialogHeader>
+                      <DialogTitle>Your Cover Photo</DialogTitle>
+                    </DialogHeader>
+                    <div className="grid gap-4 py-4">
+                      <Button className='flex flex-nowrap justify-center'
                         onClick={() => {
                           coverInputRef.current?.click();
                           coverCloseRef.current?.click();
                         }}
-                        >
-                          <Upload size={20} className='mr-2' />
-                          <span>
-                            upload new Cover Photo
-                          </span>
-                        </Button>
-
-                    <Dialog>
-                      <DialogTrigger asChild>
-                        <Button className='flex flex-nowrap justify-center'>
-                          <Eye size={20} className='mr-2' />
-                          <span>
-                            View Cover Photo
-                          </span>
-                        </Button>
-                      </DialogTrigger>
-                      <DialogContent className="max-w-[100vw] bg-transparent border-none p-0 sm:p-6">
-                        <DialogHeader>
-                          <DialogTitle className='hidden'>Cover Photo</DialogTitle>
-                        </DialogHeader>
-                        <img src={profile.profile.coverPhoto} alt="photo" 
-                        className='w-full h-auto max-h-[70vh]' />
-                      </DialogContent>
-                    </Dialog>
-
-                  </div>
-                  <DialogFooter className="sm:justify-start">
-                    <DialogClose asChild>
-                      <Button type="button" variant="secondary"
-                        ref={coverCloseRef}>
-                        Close
+                      >
+                        <Upload size={20} className='mr-2' />
+                        <span>
+                          upload new Cover Photo
+                        </span>
                       </Button>
-                    </DialogClose>
-                  </DialogFooter>
-                </DialogContent>
-              </Dialog> :
-                <Dialog>
+
+                      <Dialog>
+                        <DialogTrigger asChild>
+                          <Button className='flex flex-nowrap justify-center'>
+                            <Eye size={20} className='mr-2' />
+                            <span>
+                              View Cover Photo
+                            </span>
+                          </Button>
+                        </DialogTrigger>
+                        <DialogContent className="max-w-[100vw] bg-transparent border-none p-0 sm:p-6">
+                          <DialogHeader>
+                            <DialogTitle className='hidden'>Cover Photo</DialogTitle>
+                          </DialogHeader>
+                          <img src={profile.profile.coverPhoto} alt="photo"
+                            className='w-full h-auto max-h-[70vh]' />
+                        </DialogContent>
+                      </Dialog>
+
+                    </div>
+                    <DialogFooter className="sm:justify-start">
+                      <DialogClose asChild>
+                        <Button type="button" variant="secondary"
+                          ref={coverCloseRef}>
+                          Close
+                        </Button>
+                      </DialogClose>
+                    </DialogFooter>
+                  </DialogContent>
+                </Dialog> :
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <button className='block w-full'>
+                        <img src={profile.profile.coverPhoto.replace("upload/", "upload/q_60/")} alt="photo" className='w-full aspect-[4/1] md:aspect-[5/1] xl:aspect-[6/1] block' />
+                      </button>
+                    </DialogTrigger>
+                    <DialogContent className="max-w-[100vw] bg-transparent border-none p-0 sm:p-6">
+                      <DialogHeader>
+                        <DialogTitle className='hidden'>Cover Photo</DialogTitle>
+                      </DialogHeader>
+                      <img src={profile.profile.coverPhoto} alt="photo" className='w-full h-auto max-h-[70vh]' />
+                    </DialogContent>
+                  </Dialog>
+                }
+
+                {user.username === username ? <Dialog>
                   <DialogTrigger asChild>
                     <button>
-                      <img src={profile.profile.coverPhoto.replace("upload/", "upload/q_60/")} alt="photo" className='w-full aspect-[4/1] md:aspect-[5/1] xl:aspect-[6/1] block' />
+                      <img
+                        src={profile.profile.avatar.replace("upload/", "upload/q_40/")}
+                        alt="photo"
+                        className='aspect-[1/1] rounded-full absolute w-[25vw] md:w-[20vw] lg:w-[15vw] lg:top-[7vw] xl:top-[5vw] z-20 top-[10vw] left-4 sm:left-6 lg:left-8 xl:left-10'
+                      />
                     </button>
                   </DialogTrigger>
-                  <DialogContent className="max-w-[100vw] bg-transparent border-none p-0 sm:p-6">
+                  <DialogContent className="sm:max-w-[425px]">
                     <DialogHeader>
-                      <DialogTitle className='hidden'>Cover Photo</DialogTitle>
+                      <DialogTitle>Your Profile Photo</DialogTitle>
                     </DialogHeader>
-                    <img src={profile.profile.coverPhoto} alt="photo" className='w-full h-auto max-h-[70vh]' />
-                  </DialogContent>
-                </Dialog>
-              }
-
-              {user.username === username ? <Dialog>
-                <DialogTrigger asChild>
-                  <button>
-                    <img 
-                    src={profile.profile.avatar.replace("upload/", "upload/q_40/")} 
-                    alt="photo" 
-                    className='aspect-[1/1] rounded-full absolute w-[25vw] md:w-[20vw] lg:w-[15vw] lg:top-[7vw] xl:top-[5vw] z-20 top-[10vw] left-4 sm:left-6 lg:left-8 xl:left-10'
-                     />
-                  </button>
-                </DialogTrigger>
-                <DialogContent className="sm:max-w-[425px]">
-                  <DialogHeader>
-                    <DialogTitle>Your Profile Photo</DialogTitle>
-                  </DialogHeader>
-                  <div className="grid gap-4 py-4">
-                        <Button className='flex flex-nowrap justify-center'
+                    <div className="grid gap-4 py-4">
+                      <Button className='flex flex-nowrap justify-center'
                         onClick={() => {
                           avatarInputRef.current?.click();
                           avatarCloseRef.current?.click();
                         }}
-                        >
-                          <Upload size={20} className='mr-2' />
-                          <span>
-                            upload new Profile Photo
-                          </span>
-                        </Button>
+                      >
+                        <Upload size={20} className='mr-2' />
+                        <span>
+                          upload new Profile Photo
+                        </span>
+                      </Button>
 
-                    <Dialog>
-                      <DialogTrigger asChild>
-                        <Button className='flex flex-nowrap justify-center'>
-                          <Eye size={20} className='mr-2' />
-                          <span>
-                            View Profile Photo
-                          </span>
+                      <Dialog>
+                        <DialogTrigger asChild>
+                          <Button className='flex flex-nowrap justify-center'>
+                            <Eye size={20} className='mr-2' />
+                            <span>
+                              View Profile Photo
+                            </span>
+                          </Button>
+                        </DialogTrigger>
+                        <DialogContent className="bg-transparent border-none p-0 sm:p-6">
+                          <DialogHeader>
+                            <DialogTitle className='hidden'>Profile Photo</DialogTitle>
+                          </DialogHeader>
+                          <img src={profile.profile.avatar} alt="photo" className='w-full' />
+                        </DialogContent>
+                      </Dialog>
+
+                    </div>
+                    <DialogFooter className="sm:justify-start">
+                      <DialogClose asChild>
+                        <Button type="button" variant="secondary"
+                          ref={avatarCloseRef}>
+                          Close
                         </Button>
-                      </DialogTrigger>
-                      <DialogContent className="bg-transparent border-none p-0 sm:p-6">
-                        <DialogHeader>
-                          <DialogTitle className='hidden'>Profile Photo</DialogTitle>
-                        </DialogHeader>
-                        <img src={profile.profile.avatar} alt="photo" className='w-full' />
-                      </DialogContent>
-                    </Dialog>
+                      </DialogClose>
+                    </DialogFooter>
+                  </DialogContent>
+                </Dialog> :
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <button>
+                        <img
+                          src={profile.profile.avatar.replace("upload/", "upload/q_40/")}
+                          alt="photo"
+                          className='aspect-[1/1] rounded-full absolute w-[25vw] md:w-[20vw] lg:w-[15vw] lg:top-[7vw] xl:top-[5vw] z-20 top-[10vw] left-4 sm:left-6 lg:left-8 xl:left-10'
+                        />
+                      </button>
+                    </DialogTrigger>
+                    <DialogContent className="bg-transparent border-none p-0 sm:p-6">
+                      <DialogHeader>
+                        <DialogTitle className='hidden'>Profile Photo</DialogTitle>
+                      </DialogHeader>
+                      <img src={profile.profile.avatar} alt="photo" className='w-full' />
+                    </DialogContent>
+                  </Dialog>
+                }
+
+                {
+                  profile.profile.links?.length > 0 &&
+                  <div className='flex flex-nowrap justify-end absolute right-3 top-[18vw] sm:top-[20vw] md:top-[17vw] lg:top-[13vw] xl:top-[11vw]'>
+                    {profile.profile.links[0] &&
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <a target='_blank' href={profile.profile.links[0]}>
+                              <img src="/icons/github-142-svgrepo-com.svg" alt="github" className='bg-white rounded-full w-6 mx-2' />
+                            </a>
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <a target='_blank' href={profile.profile.links[0]} className='text-blue-600'>{profile.profile.links[0]}</a>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>}
+
+                    {profile.profile.links[1] &&
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <a target='_blank' href={profile.profile.links[1]}>
+                              <img src="/icons/linkedin-svgrepo-com (1).svg" alt="in" className=' rounded-lg w-6 mx-2' />
+                            </a>
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <a target='_blank' href={profile.profile.links[1]} className='text-blue-600'>{profile.profile.links[1]}</a>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                    }
+                    {profile.profile.links[2] &&
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <a target='_blank' href={profile.profile.links[2]}>
+                              <img src="/icons/portfolio-travel-svgrepo-com.svg" alt="portfolio" className='rounded-lg w-6 mx-2' />
+                            </a>
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <a target='_blank' href={profile.profile.links[2]} className='text-blue-600'>{profile.profile.links[2]}</a>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                    }
+                  </div>
+                }
+
+                <div className='flex flex-nowrap justify-end float-right'>
+                  <span className='proBth'>
+                    {profile.profile.postsCount} Posts
+                  </span>
+
+                  <Sheet>
+                    <SheetTrigger asChild>
+                      <button onClick={() => {
+                        if (followers.docs.length === 0) {
+                          getFollowers(1);
+                        }
+                      }}
+                        className='proBth hover:underline'>
+                        {profile.profile.followersCount} Followers
+                      </button>
+                    </SheetTrigger>
+                    <SheetContent side="left">
+                      <SheetHeader>
+                        <SheetTitle>Followers</SheetTitle>
+                        <SheetDescription className="pb-3">
+                          Followers of {profile.profile.fullName}
+                        </SheetDescription>
+                      </SheetHeader> <hr />
+                      {
+                        followers.loading ? [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((i) => {
+                          return <div className="flex items-center space-x-4 my-3 sm:pl-8 md:pl-12 overflow-auto" key={i}>
+                            <Skeleton className="h-12 w-12 rounded-full" />
+                            <div className="space-y-2">
+                              <Skeleton className="h-4 w-[150px] sm:w-[200px]" />
+                              <Skeleton className="h-4 w-[100px] sm:w-[150px]" />
+                            </div>
+                          </div>
+                        }) : <div className='pt-2'>
+                          {
+                            followers.docs.length > 0 ? followers.docs.map((profile) => {
+                              return <ProfileCard
+                                profile={profile}
+                                key={profile._id}
+                                setProfiles={updateFollowers}
+                                profiles={followers.docs} />
+                            }) : <p className='text-center py-6'>
+                              No followers found
+                            </p>
+                          }
+                          {
+                            followers.nextPage &&
+                            <Button className="block mx-auto my-4"
+                              onClick={() => {
+                                getFollowers(followers.page + 1)
+                              }} >
+                              See more
+                            </Button>
+                          }
+                        </div>
+                      }
+
+                      <SheetFooter>
+
+                      </SheetFooter>
+                    </SheetContent>
+                  </Sheet>
+
+
+                  <Sheet>
+                    <SheetTrigger asChild>
+                      <button onClick={() => {
+                        if (following.docs.length === 0) {
+                          getFollowings(1);
+                        }
+                      }}
+                        className='proBth hover:underline'>
+                        {profile.profile.followingsCount} Following
+                      </button>
+                    </SheetTrigger>
+                    <SheetContent side="left">
+                      <SheetHeader>
+                        <SheetTitle>Followings</SheetTitle>
+                        <SheetDescription className="pb-3">
+                          Followings of {profile.profile.fullName}
+                        </SheetDescription>
+                      </SheetHeader> <hr />
+                      {
+                        following.loading ? [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((i) => {
+                          return <div className="flex items-center space-x-4 my-3 sm:pl-8 md:pl-12 overflow-auto" key={i}>
+                            <Skeleton className="h-12 w-12 rounded-full" />
+                            <div className="space-y-2">
+                              <Skeleton className="h-4 w-[150px] sm:w-[200px]" />
+                              <Skeleton className="h-4 w-[100px] sm:w-[150px]" />
+                            </div>
+                          </div>
+                        }) : <div className='pt-2'>
+                          {
+                            following.docs.length > 0 ? following.docs.map((profile) => {
+                              return <ProfileCard
+                                profile={profile}
+                                key={profile._id}
+                                setProfiles={updateFollowings}
+                                profiles={following.docs} />
+                            }) : <p className='text-center py-6'>
+                              No followers found
+                            </p>
+                          }
+                          {
+                            following.nextPage &&
+                            <Button className="block mx-auto my-4"
+                              onClick={() => {
+                                getFollowings(following.page + 1)
+                              }} >
+                              See more
+                            </Button>
+                          }
+                        </div>
+                      }
+
+                      <SheetFooter>
+
+                      </SheetFooter>
+                    </SheetContent>
+                  </Sheet>
+
+                </div>
+
+                <div className='flex flex-wrap px-6 md:px-10 mt-[8vw] lg:mt-[6vw]'>
+                  <div>
+                    <p className='text-[18px] sm:text-[22px] md:text-[25px] p-0 m-0'>
+                      <span className='font-bold'>{profile.profile.fullName} </span>
+                      (<span className='text-gray-500'>
+                        @{profile.profile.username}</span>)
+                    </p>
+                    {profile.profile.about && <span className='text-gray-700 dark:text-gray-400 font-semibold block'>
+                      {profile.profile.about}
+                    </span>}
+
+                    {profile.profile.dob && <span className='flex flex-nowrap justify-start mt-4 mb-[2px] font-semibold text-[13px]'>
+                      <Cake />
+                      <span className='ml-2 mt-1'>
+                        {new Date(profile.profile.dob).toDateString()}
+                      </span>
+                    </span>}
+
+                    {profile.profile.gender && <span className='flex flex-nowrap justify-start font-semibold text-[13px] my-[2px]'>
+                      <Smile />
+                      <span className='ml-2 mt-1'>
+                        {profile.profile.gender === "M" ? "Male" : profile.profile.gender === 'F' ? "Female" : "Other"}
+                      </span>
+                    </span>}
+
+                    {profile.profile.education && <span className='flex flex-nowrap justify-start font-semibold text-[13px] my-[2px]'>
+                      <GraduationCap />
+                      <span className='ml-2 mt-1'>
+                        {profile.profile.education?.replaceAll(',', ' | ')}
+                      </span>
+                    </span>}
+
+                    {profile.profile.interest && <span className='flex flex-nowrap justify-start font-semibold text-[13px] my-[2px]'>
+                      <MessageCircleHeart />
+                      <span className='ml-2 mt-1'>
+                        {profile.profile.interest?.replaceAll(',', ' | ')}
+                      </span>
+                    </span>}
+
+                    {profile.profile.address && <span className='flex flex-nowrap justify-start font-semibold text-[13px] my-[2px]'>
+                      <MapPin />
+                      <span className='ml-2 mt-1'>
+                        {profile.profile.address?.replaceAll(',', ' | ')}
+                      </span>
+                    </span>}
 
                   </div>
-                  <DialogFooter className="sm:justify-start">
-                    <DialogClose asChild>
-                      <Button type="button" variant="secondary"
-                        ref={avatarCloseRef}>
-                        Close
-                      </Button>
-                    </DialogClose>
-                  </DialogFooter>
-                </DialogContent>
-              </Dialog> :
-                <Dialog>
-                  <DialogTrigger asChild>
-                    <button>
-                    <img 
-                    src={profile.profile.avatar.replace("upload/", "upload/q_40/")} 
-                    alt="photo" 
-                    className='aspect-[1/1] rounded-full absolute w-[25vw] md:w-[20vw] lg:w-[15vw] lg:top-[7vw] xl:top-[5vw] z-20 top-[10vw] left-4 sm:left-6 lg:left-8 xl:left-10'
-                     />
-                    </button>
-                  </DialogTrigger>
-                  <DialogContent className="bg-transparent border-none p-0 sm:p-6">
-                    <DialogHeader>
-                      <DialogTitle className='hidden'>Profile Photo</DialogTitle>
-                    </DialogHeader>
-                    <img src={profile.profile.avatar} alt="photo" className='w-full' />
-                  </DialogContent>
-                </Dialog>
-              }
-              
+
+                  <div className='flex flex-none items-center mx-auto mt-5'>
+                    {user && user.username !== username && <Button onClick={toggleFollow}
+                    className={`flex-center border mx-1 rounded-lg ${!profile.profile.isFollowedByMe ? "bg-green-500 hover:bg-green-600 text-white" : ""}`} >
+                      {
+                        !profile.profile.isFollowedByMe ? <>
+                          <UserRoundPlus size={20} /> <span className='pl-1 text-[14px]'>Follow</span>
+                        </> : <>
+                        <UserCheck size={18} className='mr-2' />
+                          <span className='pl-1 text-[12px]'>Following</span>
+                        </>
+                      }
+                    </Button>}
+
+                    {user && user.username === username && 
+                    <Button className='flex-center border mx-1 rounded-lg bg-blue-500 hover:bg-blue-600 text-white'
+                    onClick={()=>navigate('/update-user')} >
+                      <Pencil size={18} className='mr-2' />
+                      <span>Edit Profile</span>
+                    </Button>}
+
+                    {user && user.username !== username && profile.profile.isFollowedByMe &&
+                    <Button className='flex-center border mx-1 rounded-lg bg-blue-500 hover:bg-blue-600 text-white'
+                    onClick={()=>navigate('/chat')} >
+                      <Send size={18} className='mr-2' />
+                      <span>Message</span>
+                    </Button>}
+                  </div>
+                </div>
+
+              </div>
+
+              <div className='w-full my-5'>
+                <div className='w-full flex flex-nowrap justify-center border-t overflow-x-auto'>
+                  <Link to={`/user/${username}?tab=posts`} className={`tab ${currentTab === 'posts' ? 'activeTab' : ''}`}>
+                    Posts
+                  </Link>
+                  <Link to={`/user/${username}?tab=photos`} className={`tab ${currentTab === 'photos' ? 'activeTab' : ''}`}>
+                    Photos
+                  </Link>
+                  <Link to={`/user/${username}?tab=videos`} className={`tab ${currentTab === 'videos' ? 'activeTab' : ''}`}>
+                    Videos
+                  </Link>
+                  <Link to={`/user/${username}?tab=blogs`} className={`tab ${currentTab === 'blogs' ? 'activeTab' : ''}`}>
+                    Blogs
+                  </Link>
+                  <Link to={`/user/${username}?tab=shared`} className={`tab ${currentTab === 'shared' ? 'activeTab' : ''}`}>
+                    Shared
+                  </Link>
+                  {user && user.username === username &&
+                    <Link to={`/user/${username}?tab=private`} className={`tab ${currentTab === 'private' ? 'activeTab' : ''}`}>
+                      Private
+                    </Link>}
+                  <Link to={`/user/${username}?tab=pdf`} className={`tab hidden min-[450px]:inline ${currentTab === 'pdf' ? 'activeTab' : ''}`}>
+                    PDF
+                  </Link>
+                </div>
+                
               </div>
 
 
@@ -441,52 +803,52 @@ export default function ProfilePage() {
                 <AlertDialogTrigger asChild>
                   <Button className='hidden' variant="outline" ref={coverOpenRef}>Show Dialog</Button>
                 </AlertDialogTrigger>
-                  <CorpEditor 
-                  aspect={6/1} 
-                  imgSrc={coverImage} 
-                  circularCrop={false} 
-                  inh={40} 
-                  inw={240} 
+                <CorpEditor
+                  aspect={6 / 1}
+                  imgSrc={coverImage}
+                  circularCrop={false}
+                  inh={40}
+                  inw={240}
                   minHeight={40}
                   action={updateCover}
                   title='Change your Cover Photo'
                   actionTxt='Continue'
-                  />
+                />
               </AlertDialog>
 
               <AlertDialog>
                 <AlertDialogTrigger asChild>
                   <Button className='hidden' variant="outline" ref={avatarOpenRef}>Show Dialog</Button>
                 </AlertDialogTrigger>
-                  <CorpEditor 
-                  aspect={1/1} 
-                  imgSrc={avatarImage} 
-                  circularCrop={true} 
-                  inh={100} 
-                  inw={100} 
+                <CorpEditor
+                  aspect={1 / 1}
+                  imgSrc={avatarImage}
+                  circularCrop={true}
+                  inh={100}
+                  inw={100}
                   minHeight={100}
                   action={updateAvatar}
                   title='Change your profile Photo'
                   actionTxt='Continue'
-                  />
+                />
               </AlertDialog>
               <input type="file" name="avatar" id="avatar" ref={avatarInputRef}
-              multiple={false} accept="image/*" className='hidden'
-              onChange={(e) => {
-                if (e.target.files[0]) {
-                  setAvatarImage(URL.createObjectURL(e.target.files[0]))
-                  avatarOpenRef.current?.click();
-                }
-              }}
+                multiple={false} accept="image/*" className='hidden'
+                onChange={(e) => {
+                  if (e.target.files[0]) {
+                    setAvatarImage(URL.createObjectURL(e.target.files[0]))
+                    avatarOpenRef.current?.click();
+                  }
+                }}
               />
               <input type="file" name="cover" id="cover" ref={coverInputRef}
-              multiple={false} accept="image/*" className='hidden'
-              onChange={(e) => {
-                if (e.target.files[0]) {
-                  setCoverImage(URL.createObjectURL(e.target.files[0]))
-                  coverOpenRef.current?.click();
-                }
-              }}
+                multiple={false} accept="image/*" className='hidden'
+                onChange={(e) => {
+                  if (e.target.files[0]) {
+                    setCoverImage(URL.createObjectURL(e.target.files[0]))
+                    coverOpenRef.current?.click();
+                  }
+                }}
               />
             </div> :
             <div>
