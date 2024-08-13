@@ -77,6 +77,8 @@ export default function ProfilePage() {
   const [avatarImage, setAvatarImage] = useState('');
   const [coverImage, setCoverImage] = useState('');
   const [currentVideoIndex, setCurrentVideoIndex] = useState(null);
+  const [avatarLoading, setAvatarLoading] = useState(false);
+  const [coverLoading, setCoverLoading] = useState(false);
 
   // console.log(profile)
   // console.log(viewedProfiles)
@@ -186,6 +188,7 @@ export default function ProfilePage() {
         variant: "destructive",
       })
     }
+    setAvatarLoading(true);
     const response = await authService.updateAvatar({ avatar: image });
     if (response.status < 400 && response.data) {
       toast({
@@ -202,12 +205,14 @@ export default function ProfilePage() {
       }
       setProfile(updatedProfile);
       dispatch(updateViewedProfiles(updatedProfile));
+      setAvatarLoading(false);
     } else {
       toast({
         title: "Failed to upload Avatar",
         description: response.message,
         variant: "destructive",
       })
+      setAvatarLoading(false);
     }
   }
 
@@ -219,6 +224,7 @@ export default function ProfilePage() {
         variant: "destructive",
       })
     }
+    setCoverLoading(true);
     const response = await authService.updateCoverPhoto({ coverPhoto: image });
     if (response.status < 400 && response.data) {
       toast({
@@ -235,12 +241,14 @@ export default function ProfilePage() {
       }
       setProfile(updatedProfile);
       dispatch(updateViewedProfiles(updatedProfile));
+      setCoverLoading(false);
     } else {
       toast({
         title: "Failed to upload Cover Photo",
         description: response.message,
         variant: "destructive",
       })
+      setCoverLoading(false);
     }
   }
 
@@ -406,11 +414,13 @@ export default function ProfilePage() {
               <div className='w-full relative'>
                 {user.username === username ? <Dialog>
                   <DialogTrigger asChild>
-                    <button className='block w-full'>
+                    {!coverLoading ? <button className='block w-full'>
                       <img src={profile.profile.coverPhoto.replace("upload/", "upload/q_60/")}
                         alt="photo"
                         className='w-full aspect-[4/1] md:aspect-[5/1] xl:aspect-[6/1] block' />
-                    </button>
+                    </button> : 
+                      <Skeleton className='w-full aspect-[4/1] md:aspect-[5/1] xl:aspect-[6/1] block' />
+                    }
                   </DialogTrigger>
                   <DialogContent className="sm:max-w-[425px]">
                     <DialogHeader>
@@ -475,13 +485,15 @@ export default function ProfilePage() {
 
                 {user.username === username ? <Dialog>
                   <DialogTrigger asChild>
-                    <button>
+                    {!avatarLoading ? <button>
                       <img
                         src={profile.profile.avatar.replace("upload/", "upload/q_40/")}
                         alt="photo"
                         className='aspect-[1/1] rounded-full absolute w-[25vw] md:w-[20vw] lg:w-[15vw] lg:top-[7vw] xl:top-[5vw] z-20 top-[10vw] left-4 sm:left-6 lg:left-8 xl:left-10'
                       />
-                    </button>
+                    </button> : 
+                    <Skeleton className='aspect-[1/1] rounded-full absolute w-[25vw] md:w-[20vw] lg:w-[15vw] lg:top-[7vw] xl:top-[5vw] z-20 top-[10vw] left-4 sm:left-6 lg:left-8 xl:left-10' />
+                    }
                   </DialogTrigger>
                   <DialogContent className="sm:max-w-[425px]">
                     <DialogHeader>
@@ -1000,8 +1012,29 @@ export default function ProfilePage() {
                 }}
               />
             </div> :
-            <div>
+            <div className='w-full h-[calc(100vh-56px)] overflow-y-auto'>
+              <div className='w-full relative'>
+                  <Skeleton className='w-full aspect-[4/1] md:aspect-[5/1] xl:aspect-[6/1] block'/>
+                  <Skeleton className='aspect-[1/1] rounded-full absolute w-[25vw] md:w-[20vw] lg:w-[15vw] lg:top-[7vw] xl:top-[5vw] z-20 top-[10vw] left-4 sm:left-6 lg:left-8 xl:left-10'/>
+              
+                  <div className='flex flex-nowrap justify-end float-right'>
+                      <Skeleton className='w-20 h-6 mx-1 my-4 rounded-lg'/>
+                      <Skeleton className='w-20 h-6 mx-1 my-4 rounded-lg'/>
+                      <Skeleton className='w-20 h-6 mx-1 my-4 rounded-lg'/>
+                  </div>
+                  <div className='flex flex-col px-6 md:px-10 mt-[12vw] lg:mt-[10vw]'>
 
+                    <Skeleton className='w-1/2 h-6 my-1'/>
+                    <Skeleton className='w-1/3 h-4 mt-1 mb-5'/>
+                    
+                    <Skeleton className='w-1/3 h-4 my-1'/>
+                    <Skeleton className='w-1/3 h-4 my-1'/>
+                    <Skeleton className='w-1/3 h-4 my-1'/>
+                    <Skeleton className='w-1/3 h-4 my-1'/>
+                    <Skeleton className='w-1/3 h-4 my-1'/>
+                      
+                  </div>
+              </div>
             </div>
         }
       </div>
