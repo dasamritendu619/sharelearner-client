@@ -29,7 +29,22 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
-import { Cake, Eye, GraduationCap, Image, MessageCircleHeart, Smile, Upload, MapPin, UserRoundPlus, Send, Pencil, UserCheck, Video, BookOpen } from 'lucide-react'
+import { 
+  Cake, 
+  Eye, 
+  GraduationCap, 
+  Image, 
+  MessageCircleHeart, 
+  Smile, 
+  Upload, 
+  MapPin, 
+  UserRoundPlus, 
+  Send, 
+  Pencil, 
+  UserCheck, 
+  Video, 
+  BookOpen 
+} from 'lucide-react'
 import {
   AlertDialog,
   AlertDialogTrigger,
