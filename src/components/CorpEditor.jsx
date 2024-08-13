@@ -109,7 +109,7 @@ export default function CorpEditor({
                                         ref={imgRef}
                                         alt="Crop me"
                                         src={imgSrc}
-                                        className='max-h-[70vh] w-full'
+                                        className='max-h-[70vh!important] w-full'
                                     />
                                 </ReactCrop>
                             )}

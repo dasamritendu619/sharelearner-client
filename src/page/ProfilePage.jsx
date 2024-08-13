@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect, useRef, useCallback } from 'react'
 import { useParams, Link, useNavigate } from 'react-router-dom'
 import { authService } from '@/apiServices/authServices'
 import { postService } from '@/apiServices/postServices'
@@ -9,6 +9,8 @@ import SightNav from '@/components/SightNav'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Button } from "@/components/ui/button"
 import CorpEditor from '@/components/CorpEditor'
+import InfiniteScroll from 'react-infinite-scroll-component'
+import PostCard from '@/components/post/PostCard'
 import {
   Sheet,
   SheetContent,
@@ -22,22 +24,14 @@ import {
   Dialog,
   DialogClose,
   DialogContent,
-  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
-import { Cake, Eye, GraduationCap, MessageCircleHeart, Smile, Upload, MapPin, UserRoundPlus, Send, Pencil, UserCheck } from 'lucide-react'
+import { Cake, Eye, GraduationCap, Image, MessageCircleHeart, Smile, Upload, MapPin, UserRoundPlus, Send, Pencil, UserCheck, Video, BookOpen } from 'lucide-react'
 import {
   AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
 
@@ -82,14 +76,43 @@ export default function ProfilePage() {
   const coverInputRef = useRef(null);
   const [avatarImage, setAvatarImage] = useState('');
   const [coverImage, setCoverImage] = useState('');
+  const [currentVideoIndex, setCurrentVideoIndex] = useState(null);
 
   // console.log(profile)
   // console.log(viewedProfiles)
 
+  const updatePosts = useCallback((post) => {
+    console.log("object")
+    const updatedPosts = profile[tabs[currentTab]].docs.map(p => {
+      if (p._id === post._id) {
+        return post
+      }
+      return p
+    })
+    setProfile({
+      ...profile,
+      [tabs[currentTab]]: {
+        ...profile[tabs[currentTab]],
+        docs: updatedPosts
+      }
+    })
+    dispatch(updateViewedProfiles({
+      ...profile,
+      [tabs[currentTab]]: {
+        ...profile[tabs[currentTab]],
+        docs: updatedPosts
+      }
+    }))
+  }, [profile, currentTab])
+
+  const handleInView = (index) => {
+    setCurrentVideoIndex(index);
+  };
+
   const toggleFollow = async () => {
     if (!user || !profile.profile) {
       return navigate('/login');
-    } 
+    }
     const updatedProfile = {
       ...profile,
       profile: {
@@ -307,6 +330,7 @@ export default function ProfilePage() {
         }
         dispatch(updateViewedProfiles(updatedProfile));
         setProfile(updatedProfile);
+        setPostsLoading(false);
       } else {
         const updatedProfile = {
           ...profile,
@@ -334,6 +358,7 @@ export default function ProfilePage() {
       if (!profileViewed) {
         const foundedProfile = await getProfile();
         if (foundedProfile) {
+          setPostsLoading(true);
           if (currentTab === 'posts') {
             await getPosts(1, 'all', foundedProfile);
           } else if (currentTab === 'photos') {
@@ -358,7 +383,8 @@ export default function ProfilePage() {
         }
       } else if (profileViewed) {
         // setProfile(profileViewed);
-        if (profileViewed[tabs[currentTab]].length === 0) {
+        if (profileViewed[tabs[currentTab]].docs.length === 0) {
+          setPostsLoading(true);
           await getPosts(1, tabs[currentTab], profileViewed);
         } else {
           setProfile(profileViewed);
@@ -376,7 +402,7 @@ export default function ProfilePage() {
       <div className='w-full lg:w-[calc(100%-250px)]'>
         {
           profile ?
-            <div className='w-full'>
+            <div className='w-full h-[calc(100vh-56px)] overflow-y-auto'>
               <div className='w-full relative'>
                 {user.username === username ? <Dialog>
                   <DialogTrigger asChild>
@@ -741,36 +767,36 @@ export default function ProfilePage() {
 
                   <div className='flex flex-none items-center mx-auto mt-5'>
                     {user && user.username !== username && <Button onClick={toggleFollow}
-                    className={`flex-center border mx-1 rounded-lg ${!profile.profile.isFollowedByMe ? "bg-green-500 hover:bg-green-600 text-white" : ""}`} >
+                      className={`flex-center border mx-1 rounded-lg ${!profile.profile.isFollowedByMe ? "bg-green-500 hover:bg-green-600 text-white" : ""}`} >
                       {
                         !profile.profile.isFollowedByMe ? <>
                           <UserRoundPlus size={20} /> <span className='pl-1 text-[14px]'>Follow</span>
                         </> : <>
-                        <UserCheck size={18} className='mr-2' />
+                          <UserCheck size={18} className='mr-2' />
                           <span className='pl-1 text-[12px]'>Following</span>
                         </>
                       }
                     </Button>}
 
-                    {user && user.username === username && 
-                    <Button className='flex-center border mx-1 rounded-lg bg-blue-500 hover:bg-blue-600 text-white'
-                    onClick={()=>navigate('/update-user')} >
-                      <Pencil size={18} className='mr-2' />
-                      <span>Edit Profile</span>
-                    </Button>}
+                    {user && user.username === username &&
+                      <Button className='flex-center border mx-1 rounded-lg bg-blue-500 hover:bg-blue-600 text-white'
+                        onClick={() => navigate('/update-user')} >
+                        <Pencil size={18} className='mr-2' />
+                        <span>Edit Profile</span>
+                      </Button>}
 
                     {user && user.username !== username && profile.profile.isFollowedByMe &&
-                    <Button className='flex-center border mx-1 rounded-lg bg-blue-500 hover:bg-blue-600 text-white'
-                    onClick={()=>navigate('/chat')} >
-                      <Send size={18} className='mr-2' />
-                      <span>Message</span>
-                    </Button>}
+                      <Button className='flex-center border mx-1 rounded-lg bg-blue-500 hover:bg-blue-600 text-white'
+                        onClick={() => navigate('/chat')} >
+                        <Send size={18} className='mr-2' />
+                        <span>Message</span>
+                      </Button>}
                   </div>
                 </div>
 
               </div>
 
-              <div className='w-full my-5'>
+              <div className='w-full mt-5'>
                 <div className='w-full flex flex-nowrap justify-center border-t overflow-x-auto'>
                   <Link to={`/user/${username}?tab=posts`} className={`tab ${currentTab === 'posts' ? 'activeTab' : ''}`}>
                     Posts
@@ -795,7 +821,130 @@ export default function ProfilePage() {
                     PDF
                   </Link>
                 </div>
-                
+
+                <div className='w-full md:w-[60%] lg:w-[50%] mx-auto'>
+                  {!postsLoading ? <InfiniteScroll
+                    scrollableTarget='scrollableDiv'
+                    dataLength={profile[tabs[currentTab]].docs.length}
+                    next={() => getPosts(profile[tabs[currentTab]].page + 1, tabs[currentTab], profile)}
+                    height={window.innerHeight - 58}
+                    hasMore={profile[tabs[currentTab]].nextPage ? true : false}
+                    loader={
+                      <>
+                        {
+                          [1, 2, 3, 4, 5].map((i) => {
+                            return <div key={i}><div className="flex items-center space-x-4 pl-4 my-3 overflow-auto" >
+                              <Skeleton className="h-12 w-12 rounded-full" />
+                              <div className="space-y-2">
+                                <Skeleton className="h-4 w-[150px] sm:w-[200px]" />
+                                <Skeleton className="h-4 w-[100px] sm:w-[150px]" />
+                              </div>
+                            </div>
+                              <div>
+                                <Skeleton className={'w-full h-96'} />
+                              </div>
+                              <div className='flex flex-nowrap justify-center mb-3'>
+                                <Skeleton className={'w-20 rounded-full h-8 mx-1 my-2 '} />
+                                <Skeleton className={'w-20 rounded-full h-8 mx-1 my-2 '} />
+                                <Skeleton className={'w-20 rounded-full h-8 mx-1 my-2 '} />
+                                <Skeleton className={'w-20 rounded-full h-8 mx-1 my-2 '} />
+                              </div>
+                            </div>
+                          })
+                        }
+                      </>
+                    }
+                    endMessage={
+                      <>
+                      {
+                        profile[tabs[currentTab]].docs.length > 0 ? 
+                        <p className='w-full text-center text-lg font-semibold my-12'>😒 No More Posts</p> : 
+                        <p className='w-full text-center text-lg font-semibold my-12'>
+                          😢 {profile.profile.fullName} has not posted anything yet.
+                        </p>
+                      }
+                      </>
+                    }
+                  >
+                    {user && user.username === username && <div className='bg-white dark:bg-gray-800 rounded-lg shadow-lg px-2 py-3 sm:px-3 my-2 md:mr-2 lg:mx-2'>
+                      <div className='flex flex-nowrap justify-between'>
+                        <Link to={`/user/${user.username}`}>
+                          <img src={user.avatar.replace("upload/", "upload/w_40/")} alt='avatar'
+                            className='rounded-full w-10 h-10' /></Link>
+                        <Link to={'/create-blog-post'}
+                          className='w-[calc(100%-80px)] sm:w-[calc(100%-40px)] text-start mx-2 sm:mr-0'>
+                          <Button
+                            className='h-10 px-3 py-1 rounded-full w-full bg-gray-200 hover:bg-gray-200 dark:bg-gray-700 text-start text-gray-500'>
+                            Write a blog here...
+                          </Button>
+                        </Link>
+                        <Link to={'/create-photo-post'}
+                          className='sm:hidden bg-gray-200 dark:bg-gray-700 p-2 rounded-full'>
+                          <Image size={24} />
+                        </Link>
+                      </div>
+                      <div className='hidden sm:block my-4 border-t dark:border-white'>
+
+                      </div>
+                      <div className='hidden sm:flex sm:flex-nowrap sm:justify-center'>
+                        <Link className='crpnavBtn' to={'/create-photo-post'} >
+                          <Image size={24} className='text-green-600 font-bold' /> <span className='pl-2 text-[14px]'>Photo</span>
+                        </Link>
+                        <Link className='crpnavBtn' to={'/create-video-post'}>
+                          <Video size={24} className='text-red-600 font-bold' /> <span className='pl-2 text-[14px]'>Video</span>
+                        </Link>
+                        <Link className='crpnavBtn' to={'/create-blog-post'}>
+                          <BookOpen size={24} className='text-blue-600 font-bold' /> <span className='pl-2 text-[14px]'>Article</span>
+                        </Link>
+                      </div>
+                    </div>}
+                    {
+                      profile[tabs[currentTab]].docs.map((post, index) => {
+                        return <PostCard
+                          key={post._id}
+                          post={{
+                            ...post,
+                            author: {
+                              fullName: profile.profile.fullName,
+                              _id: profile.profile._id,
+                              username: profile.profile.username,
+                              avatar: profile.profile.avatar,
+                              followersCount: profile.profile.followersCount,
+                              isFollowedByMe: profile.profile.isFollowedByMe,
+                            }
+                          }}
+                          updatePosts={updatePosts}
+                          isInView={currentVideoIndex === index}
+                          onInView={() => handleInView(index)} />
+                      })
+                    }
+                  </InfiniteScroll> :
+                    <>
+                      {
+                        [1, 2, 3, 4, 5, 6].map((i) => {
+                          return <div key={i}><div className="flex items-center space-x-4 pl-4 my-3 overflow-auto">
+                            <Skeleton className="h-12 w-12 rounded-full" />
+                            <div className="space-y-2">
+                              <Skeleton className="h-4 w-[150px] sm:w-[200px]" />
+                              <Skeleton className="h-4 w-[100px] sm:w-[150px]" />
+                            </div>
+                          </div>
+                            <div>
+                              <Skeleton className={'w-full h-96'} />
+                            </div>
+                            <div className='flex flex-nowrap justify-center mb-3'>
+                              <Skeleton className={'w-20 rounded-full h-8 mx-1 my-2 '} />
+                              <Skeleton className={'w-20 rounded-full h-8 mx-1 my-2 '} />
+                              <Skeleton className={'w-20 rounded-full h-8 mx-1 my-2 '} />
+                              <Skeleton className={'w-20 rounded-full h-8 mx-1 my-2 '} />
+                            </div>
+                          </div>
+                        })
+                      }
+                    </>
+                  }
+                </div>
+
               </div>
 
 
