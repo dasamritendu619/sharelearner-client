@@ -12,7 +12,7 @@ import InfiniteScroll from 'react-infinite-scroll-component'
 import { Button as Btn } from '@/components/ui/button'
 import { BookOpen, Image, Video } from 'lucide-react'
 import { setSuggestedUsers, reValidateByKey } from '@/store/authSlice'
-import { Button } from '@/components/ui/moving-border'
+// import { Button } from '@/components/ui/moving-border'
 import SightNav from '@/components/SightNav'
 
 
@@ -178,8 +178,8 @@ export default function Home() {
                   className='rounded-full w-10 h-10' /></Link>
               <Link to={'/create-blog-post'}
                 className='w-[calc(100%-80px)] sm:w-[calc(100%-40px)] text-start mx-2 sm:mr-0'>
-                <Btn 
-                className='h-10 px-3 py-1 rounded-full w-full bg-gray-200 hover:bg-gray-200 dark:bg-gray-700 text-start text-gray-500'>
+                <Btn
+                  className='h-10 px-3 py-1 rounded-full w-full bg-gray-200 hover:bg-gray-200 dark:bg-gray-700 text-start text-gray-500'>
                   Write a blog here...
                 </Btn>
               </Link>
@@ -204,7 +204,7 @@ export default function Home() {
             </div>
           </div>}
           {
-            postsData.posts.map((post,index) => {
+            postsData.posts.map((post, index) => {
               return <PostCard
                 key={post._id}
                 post={post}
@@ -288,12 +288,12 @@ export default function Home() {
         </> : <div className='text-center px-4 pt-2 pb-8'>
           <div className='flex-center mt-6 lg:mt-10 mb-2'>
             <Link to={"/signup"}>
-              <Button
-                borderRadius="1.75rem"
-                className="bg-white dark:bg-black text-black dark:text-white border-neutral-200 dark:border-slate-800"
-              >
-                Join Us Now
-              </Button>
+              <button className="p-[3px] my-5 relative">
+                <div className="absolute inset-0 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-lg" />
+                <div className="px-8 py-3  bg-black rounded-[6px]  relative group transition duration-200 text-white hover:bg-transparent">
+                  Join ShareLearner
+                </div>
+              </button>
             </Link>
           </div>
           Please login to like, comment, share and save posts.
