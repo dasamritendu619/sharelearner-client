@@ -55,8 +55,8 @@ export default function Login() {
     }
 
   return (
-    <div className="w-screen h-auto bg-blue-100 dark:bg-gray-950 fixed top-0 left-0">
-      <div className="w-full lg:grid lg:min-h-[600px] lg:grid-cols-2 xl:min-h-[800px]">
+    <div className="w-screen h-screen bg-blue-100 overflow-y-auto dark:bg-gray-950 fixed top-0 left-0">
+      <div className="w-full lg:grid lg:min-h-[600px] lg:grid-cols-2 h-auto xl:min-h-[800px]">
       <div className="flex items-center justify-center py-12">
         <div className="mx-auto grid w-[350px] gap-6">
           <div className="grid gap-2 text-center">

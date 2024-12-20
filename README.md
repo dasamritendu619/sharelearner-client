@@ -38,3 +38,9 @@ It is an online platform which students can use to capture their work-based expe
 - **View Group Members**: Users can view group members.
 - **View Group Posts**: Users can view group posts.
 
+## Contributors
+
+- [Kuntal Maity](https://github.com/kuntal-hub)
+- [Shuvadip Dian](https://github.com/shuvadipdian)
+- [Sayan Maity](https://github.com/Sayancemk)
+- [Amritendu Das](https://github.com/dasamritendu619)
