@@ -46,7 +46,7 @@ export default function Sidebar() {
             <input 
             value={search}
             onChange={(e)=>setSearch(e.target.value)}
-            className='input input-bordered rounded-md bg-red-500 text-white' 
+            className='input input-bordered rounded-md' 
             type="text" 
             placeholder='Search...' 
             />

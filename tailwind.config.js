@@ -94,7 +94,7 @@ module.exports = {
       },
     },
   },
-  plugins: [require("tailwindcss-animate"), addVariablesForColors],
+  plugins: [require('daisyui'),require("tailwindcss-animate"), addVariablesForColors],
 }
 
 
