@@ -1,8 +1,8 @@
 import React, { useState } from 'react'
 import { IoSend } from "react-icons/io5";
-import axios from 'axios';
 import { useDispatch, useSelector } from 'react-redux';
 import { setMessages } from '../store/messageSlice';
+import { messageService } from '@/apiServices/messageServices';
 
 export default function SendInput() {
   const [ message, setMessage ] = useState("");
@@ -12,14 +12,13 @@ export default function SendInput() {
 
   const onSubmitHandler = async (e) => {
     e.preventDefault();
+    if (!message.trim()) {
+      console.log("Message cannot be empty");
+      return;
+    }
     try {
-      const res = await axios.post(`http://localhost:8080/api/v1/message/send/${selectedUser?._id}`,{message},{
-        headers:{
-          "Content-Type":'application/json'
-        },
-        withCredentials:true
-      })
-      dispatch(setMessages([...messages,res?.data?.data]))
+      const res = await messageService.sendMessage({ receiverId: selectedUser?._id,message: message });
+      dispatch(setMessages([...messages,res?.data]))
     } catch (error) {
       console.log(error);
     }
