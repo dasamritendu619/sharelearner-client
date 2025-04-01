@@ -4,9 +4,7 @@ import { setMessages } from "../store/messageSlice";
 import { useSocket } from "../context/SocketContext.jsx";
 
 export default function useGetRealTimeMessage() {
-  //const { socket } = useSelector(store => store.socket)
   const { socket } = useSocket();
-  console.log("Hellow",socket);
   const { messages } = useSelector(store => store.message)
   const dispatch = useDispatch();
   useEffect(() => {
