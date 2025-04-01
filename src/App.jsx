@@ -8,6 +8,7 @@ import { login } from './store/authSlice'
 import OurLogo from './components/OurLogo'
 import "./cssFiles/loader.css";
 import Hearer from './components/Hearer'
+import conf from './conf/conf';
 
 import io from 'socket.io-client';
 import { setSocketId } from './store/socketSlice';
@@ -42,7 +43,7 @@ function App() {
 
   useEffect(()=>{
     if(authUser){
-      const socketio = io('http://localhost:8080',{
+      const socketio = io(`${conf.backendUrl}`,{
         query:{
           userId:authUser._id
         }
