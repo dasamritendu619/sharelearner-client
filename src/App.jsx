@@ -3,13 +3,20 @@ import { Toaster } from "@/components/ui/toaster"
 import { ThemeProvider } from "@/components/theme-provider"
 import { useState,useEffect } from 'react'
 import { authService } from './apiServices/authServices'
-import { useDispatch } from 'react-redux'
+import { useDispatch,useSelector } from 'react-redux'
 import { login } from './store/authSlice'
 import OurLogo from './components/OurLogo'
 import "./cssFiles/loader.css";
 import Hearer from './components/Hearer'
 
+import io from 'socket.io-client';
+import { setSocketId } from './store/socketSlice';
+import { setOnlineUsers } from './store/userSlice';
+import { useSocket } from './context/SocketContext.jsx'
+
 function App() {
+  const {authUser} = useSelector(store=>store.user);
+  const { setSocket } = useSocket();
   const dispatch = useDispatch()
   const [loading, setLoading] = useState(true)
 
@@ -32,6 +39,30 @@ function App() {
     }
     verifyUser()
   }, [])
+
+  useEffect(()=>{
+    if(authUser){
+      const socketio = io('http://localhost:8080',{
+        query:{
+          userId:authUser._id
+        }
+      });
+      setSocket(socketio)
+
+      socketio.on("connect", () => {
+        console.log("Connected with socket ID:", socketio.id);
+        dispatch(setSocketId(socketio.id));
+      });
+
+      socketio?.on('getOnlineUsers',(onlineUsers)=>{
+        dispatch(setOnlineUsers(onlineUsers));
+      });
+      return ()=>socketio.close();
+    }else{
+        setSocket(null);
+        dispatch(setSocketId(null));
+    }
+  },[authUser])
 
   return (
     <ThemeProvider defaultTheme="system" storageKey="vite-ui-theme">

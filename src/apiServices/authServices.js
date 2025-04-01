@@ -387,6 +387,22 @@ export class AuthService {
         }
     }
 
+    async getOtherUsers(){
+        const accessToken = localStorage.getItem('accessToken');
+        const refreshToken = localStorage.getItem('refreshToken');
+        try {
+            const response = await axios.get(`${conf.backendUrl}/api/v1/user/otherUsers`,{
+                headers:{
+                    Authorization:`Bearer ${accessToken} ${refreshToken}`
+                }
+            });
+            return response.data;
+        } catch (error) {
+            console.log("Error in getCurrentUser",error);
+            return {status:error.status || 400,message:error.message || "Something Went Wrong!",data:null};
+        }
+    }
+
 
 }
 

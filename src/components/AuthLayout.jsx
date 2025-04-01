@@ -12,6 +12,7 @@ export default memo(function AuthLayout({children, authentication = true}) {
         if(authentication && authStatus !== authentication){
             navigate("/login")
         } else if(!authentication && authStatus !== authentication){
+            console.log(authentication)
             console.log(authStatus)
             navigate("/")
         }

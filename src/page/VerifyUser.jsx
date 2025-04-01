@@ -7,6 +7,7 @@ import { useToast } from "@/components/ui/use-toast"
 import { ToastAction } from "@/components/ui/toast"
 import { useDispatch } from "react-redux"
 import {login} from "@/store/authSlice"
+import { setAuthUser } from '../store/userSlice';
 
 import {
     InputOTP,
@@ -46,6 +47,7 @@ export default function InputOTPControlled() {
             setError("")
             console.log(responce.data)
             dispatch(login(responce.data.updatedUser))
+            dispatch(setAuthUser(responce.data.updatedUser));
             toast({
                 variant: "success",
                 className: "bg-green-500",
