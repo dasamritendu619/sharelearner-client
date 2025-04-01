@@ -398,7 +398,7 @@ export class AuthService {
             });
             return response.data;
         } catch (error) {
-            console.log("Error in getCurrentUser",error);
+            console.log("Error in getOtherUsers",error);
             return {status:error.status || 400,message:error.message || "Something Went Wrong!",data:null};
         }
     }
