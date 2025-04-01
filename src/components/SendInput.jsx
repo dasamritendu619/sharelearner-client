@@ -18,7 +18,8 @@ export default function SendInput() {
     }
     try {
       const res = await messageService.sendMessage({ receiverId: selectedUser?._id,message: message });
-      dispatch(setMessages([...messages,res?.data]))
+      console.log(res.data);
+      dispatch(setMessages([...(Array.isArray(messages) ? messages : []),res.data]))
     } catch (error) {
       console.log(error);
     }
