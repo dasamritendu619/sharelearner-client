@@ -14,7 +14,7 @@ export default function MessageContainer() {
     <>
       {
         selectedUser !== null ? (
-          <div className='md:min-w-[550px] h-[50vh] flex flex-col'>
+          <div className='md:min-w-[550px] h-[50vh] lg:h-[85vh] flex flex-col'>
             <div className='flex gap-2 items-center bg-zinc-800 text-white px-4 py-2 mb-2'>
               <div className={`avatar ${isOnline ? 'online' : ''}`}>
                 <div className='w-12 rounded-full'>
