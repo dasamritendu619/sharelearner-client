@@ -10,7 +10,7 @@ export default function OtherUsers() {
     if(!otherUser) return; //early reaturn in react
     
     return (
-        <div className='overflow-auto flex-1'>
+        <div className='overflow-auto flex-1 hidden lg:block'>
             {
                 otherUser?.map((user)=>{
                     return (
