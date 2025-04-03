@@ -1,33 +1,14 @@
 import React, { useState } from 'react'
 import { IoMdSearch } from "react-icons/io";
 import OtherUsers from './OtherUsers';
-//import axios from 'axios';
 import toast from 'react-hot-toast'
-//import {useNavigate} from 'react-router-dom'
 import { useDispatch,useSelector } from 'react-redux';
-import { setAuthUser, setOnlineUsers, setOtherUsers, setSelectedUser } from '../store/userSlice';
-//import { setMessages } from '../store/messageSlice';
+import { setOtherUsers } from '../store/userSlice';
 
 export default function Sidebar() {
   const [search , setSearch] = useState("")
   const { otherUser} = useSelector(store=> store.user)
   const dispatch = useDispatch();
-
-  // const navigate = useNavigate()
-  // const logoutHandler = async ()=>{
-  //   try {
-  //     const res = await axios.get(`http://localhost:8080/api/v1/user/logout`)
-  //     navigate("/login")
-  //     toast.success(res.data.data)
-  //     dispatch(setAuthUser(null))
-  //     dispatch(setMessages(null));
-  //     dispatch(setOtherUsers(null));
-  //     dispatch(setSelectedUser(null));
-  //     dispatch(setOnlineUsers(null));
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // }
 
   const searchSubmitHandler = (e)=>{
     e.preventDefault();

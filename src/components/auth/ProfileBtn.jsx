@@ -16,6 +16,8 @@ import { Blend, BookMarked, Github, Handshake, House, LifeBuoy, LogOut, MessageS
 import { authService } from '@/apiServices/authServices'
 import { useDispatch } from 'react-redux'
 import { logout } from '@/store/authSlice'
+import { setAuthUser, setOnlineUsers, setOtherUsers, setSelectedUser} from '@/store/userSlice'
+import { setMessages } from '@/store/messageSlice'
 import { useToast } from '../ui/use-toast'
 import { reValidateByKey } from '@/store/authSlice'
 import { revalidateByKey as revalidatePosts } from '@/store/postSlice'
@@ -40,6 +42,11 @@ export default memo(function ProfileBtn({className='my-2 ml-[3px] mr-1 sm:mr-2 x
             localStorage.removeItem("accessToken");
             localStorage.removeItem("refreshToken");
             dispatch(logout());
+            dispatch(setAuthUser(null))
+            dispatch(setMessages(null));
+            dispatch(setOtherUsers(null));
+            dispatch(setSelectedUser(null));
+            dispatch(setOnlineUsers(null));
             reValidateByKey('all');
             revalidatePosts('all');
         }
