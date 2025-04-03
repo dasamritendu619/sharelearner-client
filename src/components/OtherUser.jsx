@@ -22,7 +22,7 @@ export default function OtherUser(props) {
                 </div>
                 <div className='flex flex-col flex-1'>
                     <div className='flex justify-between gap-2'>
-                        <p className='text-stone-800'>{user?.fullName}</p>
+                        <p className='text-stone-800 dark:text-zinc-200'>{user?.fullName}</p>
                     </div>
                 </div>
             </div>
