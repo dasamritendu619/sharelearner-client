@@ -14,7 +14,7 @@ export default function OtherUser(props) {
     }
     return (
         <>
-            <div onClick={()=>selectedUserHandler(user)} className={`${selectedUser?._id === user._id ? 'bg-zinc-200':''} flex gap-2 items-center hover:bg-zinc-200 rounded p-2 cursor-pointer`}>
+            <div onClick={()=>selectedUserHandler(user)} className={`${selectedUser?._id === user._id ? 'bg-gray-500':''} flex gap-2 items-center hover:bg-slate-500 rounded p-2 cursor-pointer`}>
                 <div className={`avatar ${isOnline ? 'online': ''}`}>
                     <div className='w-12 rounded-full'>
                         <img src={user?.avatar} alt="user profile" />
