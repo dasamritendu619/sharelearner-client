@@ -118,7 +118,10 @@ function HomeNotLogin() {
                     </div>
                 </WavyBackground>
             </div>
-
+           
+           <div className="w-full text-center py-6 bg-white dark:bg-black text-gray-600 dark:text-gray-400 text-sm">
+  © 2025 YourCompanyName. All rights reserved.
+</div>
 
 
 
@@ -128,6 +131,4 @@ function HomeNotLogin() {
 }
 
 export default HomeNotLogin;
-<div className="w-full text-center py-6 bg-white dark:bg-black text-gray-600 dark:text-gray-400 text-sm">
-  © 2025 YourCompanyName. All rights reserved.
-</div>
+
