@@ -17,6 +17,8 @@ import { Button } from '../ui/button'
 import { postService } from '@/apiServices/postServices'
 import { Progress } from "@/components/ui/progress"
 import { updateVideoPosts } from '@/store/postSlice'
+import * as nsfwjs from 'nsfwjs';
+import * as tf from '@tensorflow/tfjs';
 
 export default function AssetPostForm({ data, type }) {
   const user = useSelector(state => state.auth.user)
@@ -29,6 +31,88 @@ export default function AssetPostForm({ data, type }) {
   const [uploadPercentage, setUploadPercentage] = useState(0)
   const titleRef = useRef(null)
   const dispatch = useDispatch()
+  const modelRef = useRef(null);
+
+  // Load NSFW model once
+  const loadModel = async () => {
+    if (!modelRef.current) {
+      modelRef.current = await nsfwjs.load(); // loads smaller model by default
+    }
+  };
+
+  // Convert image file to <img> element for NSFW check
+  const checkNSFW = async (file) => {
+    await loadModel();
+
+    const image = new Image();
+    image.src = URL.createObjectURL(file);
+    image.crossOrigin = 'anonymous';
+
+    await new Promise((resolve) => {
+      image.onload = resolve;
+    });
+
+    const predictions = await modelRef.current.classify(image);
+
+    const isUnsafe = predictions.some(p =>
+      (p.className === 'Porn' || p.className === 'Hentai' || p.className === 'Sexy') &&
+      p.probability > 0.6
+    );
+
+    return !isUnsafe; // true = safe
+  };
+
+  const checkVideoNSFW = async (file) => {
+    const model = await nsfwjs.load();
+
+    return new Promise((resolve) => {
+      const video = document.createElement('video');
+      video.src = URL.createObjectURL(file);
+      video.crossOrigin = 'anonymous';
+      video.preload = 'metadata';
+
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+
+      video.onloadedmetadata = async () => {
+        const duration = video.duration;
+        const interval = 3; // seconds
+        let currentTime = 0;
+        let unsafe = false;
+
+        const checkFrame = () => {
+          if (currentTime >= duration) {
+            resolve(!unsafe);
+            return;
+          }
+
+          video.currentTime = currentTime;
+        };
+
+        video.onseeked = async () => {
+          canvas.width = video.videoWidth;
+          canvas.height = video.videoHeight;
+          ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+          const predictions = await model.classify(canvas);
+
+          const foundUnsafe = predictions.some(p =>
+            ['Porn', 'Hentai', 'Sexy'].includes(p.className) && p.probability > 0.6
+          );
+
+          if (foundUnsafe) {
+            unsafe = true;
+            resolve(false);
+          } else {
+            currentTime += interval;
+            checkFrame();
+          }
+        };
+
+        checkFrame();
+      };
+    });
+  };
 
   const updateProgress = (p) => {
     setUploadPercentage(p)
@@ -54,6 +138,33 @@ export default function AssetPostForm({ data, type }) {
           description: "Please upload a file to create a post.",
         })
       }
+      
+      if(type==="photo"){
+        const isSafe = await checkNSFW(file);
+
+        if (!isSafe) {
+          setUploadPercentage(0)
+          return toast({
+            variant: "destructive",
+            title: "Inappropriate Content Detected",
+            description: "Please upload a different image.",
+          });
+        }
+      }
+
+      if (type === "video") {
+        const isSafe = await checkVideoNSFW(file); // ✅ new function
+      
+        if (!isSafe) {
+          setUploadPercentage(0);
+          return toast({
+            variant: "destructive",
+            title: "Inappropriate Content Detected",
+            description: "Please upload a different video.",
+          });
+        }
+      }
+      
       response = await postService.createPost({
         title: titleRef.current.value,
         visibility: value,
