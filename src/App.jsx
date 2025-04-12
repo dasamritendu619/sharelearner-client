@@ -9,6 +9,7 @@ import OurLogo from './components/OurLogo'
 import "./cssFiles/loader.css";
 import Hearer from './components/Hearer'
 import conf from './conf/conf';
+import { useNavigate } from 'react-router-dom'
 
 import io from 'socket.io-client';
 import { setSocketId } from './store/socketSlice';
@@ -20,6 +21,13 @@ function App() {
   const { setSocket } = useSocket();
   const dispatch = useDispatch()
   const [loading, setLoading] = useState(true)
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if(!authUser) {
+      navigate('/about-us');
+    }
+  },[authUser])
 
   useEffect(() => {
     const verifyUser = async () => {
