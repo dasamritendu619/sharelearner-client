@@ -5,20 +5,20 @@ import { useSelector } from 'react-redux';
 import useGetRealTimeMessage from '../hooks/useGetRealTimeMessage';
 
 export default function Messages() {
-  
+
   useGetMessages();
   useGetRealTimeMessage();
-  const {messages} = useSelector(store=>store.message)
+  const { messages } = useSelector(store => store.message)
 
   return (
-    <div className='px-4 flex-1 overflow-auto'>
-        {
-          messages && messages?.map((message)=>{
-            return (
-              <Message key={message._id} message={message} />
-            )
-          })
-        }
+    <div className='px-4 flex-1 lg:w-[60vw] overflow-auto'>
+      {
+        messages && messages?.map((message) => {
+          return (
+            <Message key={message._id} message={message} />
+          )
+        })
+      }
     </div>
   )
 }
