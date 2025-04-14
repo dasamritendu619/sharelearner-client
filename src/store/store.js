@@ -33,20 +33,8 @@ import {
 } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 
-const userPersistConfig = {
-  key: "user",
-  version: 1,
-  storage,
-};
-
 const messagePersistConfig = {
   key: "message",
-  version: 1,
-  storage,
-};
-
-const socketIdPersistConfig = {
-  key: "socketId",
   version: 1,
   storage,
 };
@@ -54,9 +42,9 @@ const socketIdPersistConfig = {
 const rootReducer = combineReducers({
     auth:authSlice,
     post:postSlice,
-    user: persistReducer(userPersistConfig, userSlice),
+    user:userSlice,
     message:persistReducer(messagePersistConfig, messageSlice),
-    socket:persistReducer(socketIdPersistConfig,socketSlice)
+    socket:socketSlice
 });
 
 // const persistedReducer = persistReducer(persistConfig, rootReducer);
