@@ -5,10 +5,10 @@ import { setMessages } from '../store/messageSlice';
 import { messageService } from '@/apiServices/messageServices';
 
 export default function SendInput() {
-  const [ message, setMessage ] = useState("");
+  const [message, setMessage] = useState("");
   const dispatch = useDispatch();
-  const {selectedUser} = useSelector(store=> store.user);
-  const {messages} = useSelector(store=> store.message)
+  const { selectedUser } = useSelector(store => store.user);
+  const { messages } = useSelector(store => store.message)
 
   const onSubmitHandler = async (e) => {
     e.preventDefault();
@@ -17,9 +17,9 @@ export default function SendInput() {
       return;
     }
     try {
-      const res = await messageService.sendMessage({ receiverId: selectedUser?._id,message: message });
+      const res = await messageService.sendMessage({ receiverId: selectedUser?._id, message: message });
       console.log(res.data);
-      dispatch(setMessages([...(Array.isArray(messages) ? messages : []),res.data]))
+      dispatch(setMessages([...(Array.isArray(messages) ? messages : []), res.data]))
     } catch (error) {
       console.log(error);
     }

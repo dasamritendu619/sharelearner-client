@@ -2,14 +2,14 @@ import React, { useEffect } from 'react'
 import SendInput from './SendInput'
 import Messages from './Messages'
 import { useDispatch, useSelector } from 'react-redux'
-import {setSelectedUser} from '../store/userSlice'
+import { setSelectedUser } from '../store/userSlice'
 
 export default function MessageContainer() {
-  const { authUser,selectedUser, onlineUsers } = useSelector(store => store.user);
+  const { authUser, selectedUser, onlineUsers } = useSelector(store => store.user);
   const dispatch = useDispatch();
 
   const isOnline = onlineUsers?.includes(selectedUser?._id);
- 
+
   return (
     <>
       {
