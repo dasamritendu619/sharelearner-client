@@ -42,15 +42,15 @@ const persistConfig = {
 const rootReducer = combineReducers({
     auth:authSlice,
     post:postSlice,
-    user: userSlice,
-    message:messageSlice,
-    socket:socketSlice
+    user: persistReducer(persistConfig, userSlice),
+    message:persistReducer(persistConfig, messageSlice),
+    socket:persistReducer(persistConfig,socketSlice)
 });
 
-const persistedReducer = persistReducer(persistConfig, rootReducer);
+// const persistedReducer = persistReducer(persistConfig, rootReducer);
 
 const store = configureStore({
-  reducer: persistedReducer,
+  reducer: rootReducer,
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
       serializableCheck: {
