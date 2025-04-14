@@ -13,7 +13,7 @@ import { useNavigate } from 'react-router-dom'
 
 import io from 'socket.io-client';
 import { setSocketId } from './store/socketSlice';
-import { setOnlineUsers } from './store/userSlice';
+import { setOnlineUsers, setAuthUser } from './store/userSlice';
 import { useSocket } from './context/SocketContext.jsx'
 
 function App() {
@@ -38,11 +38,13 @@ function App() {
           setLoading(false)
         } else {
           dispatch(login(res.data))
+          dispatch(setAuthUser(res.data))
           setLoading(false)
         }
       }
       else {
         dispatch(login(response.data))
+        dispatch(setAuthUser(response.data))
         setLoading(false)
       }
     }
