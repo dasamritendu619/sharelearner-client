@@ -1,6 +1,6 @@
 {
-  "name": "MyWebSite",
-  "short_name": "MySite",
+  "name": "Share Learner",
+  "short_name": "Share Learner",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
