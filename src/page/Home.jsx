@@ -130,7 +130,7 @@ export default function Home() {
 
   return (
     <div
-      className='w-screen flex flex-nowrap justify-center fixed h-[calc(100vh-94px)] sm:h-[calc(100vh-58px)] top-[94px] left-0 sm:top-[56px] overflow-y-auto'>
+      className='w-screen bg-blue-100 dark:bg-gray-950 flex flex-nowrap justify-center fixed h-[calc(100vh-94px)] sm:h-[calc(100vh-58px)] top-[94px] left-0 sm:top-[56px] overflow-y-auto'>
       <div className='hidden lg:block lg:w-[30%] xl:w-[25%]'>
         <SightNav />
       </div>
