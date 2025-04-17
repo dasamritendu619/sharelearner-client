@@ -24,18 +24,13 @@ function App() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if(!authUser) {
-      navigate('/about-us');
-    }
-  },[authUser])
-
-  useEffect(() => {
     const verifyUser = async () => {
       const response = await authService.getCurrentUser();
       if (!response.data || response.status >= 400) {
         const res = await authService.refreshAccessToken();
         if (!res.data || res.status >= 400) {
           setLoading(false)
+          navigate('/about-us');
         } else {
           dispatch(login(res.data))
           dispatch(setAuthUser(res.data))

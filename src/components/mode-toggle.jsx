@@ -36,7 +36,7 @@ export function ModeToggle() {
         </DropdownMenuItem>
         <DropdownMenuItem onClick={() => setTheme("system")} className=" cursor-pointer">
         <SunMoon className="mr-2 h-4 w-4" />
-        <span>Syatem</span>
+        <span>System</span>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
