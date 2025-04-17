@@ -4,7 +4,7 @@ import React from 'react'
 
 export default function CreatePost({type}) {
   return (
-    <div className='w-screen h-auto bg-blue-100 dark:bg-gray-950'>
+    <div className='w-screen h-auto bg-blue-100 min-h-screen dark:bg-gray-950'>
       {
         type === 'blog' ? <BlogPostForm /> :
         <AssetPostForm type={type} />
