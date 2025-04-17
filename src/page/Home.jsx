@@ -244,7 +244,7 @@ export default function Home() {
       <div className='hidden md:block md:w-[40%] lg:w-[30%] xl:w-[25%]  h-[calc(100vh-58px)]'>
         {user ? <>
           <h2
-            className='text-center text-[20px] font-semibold py-4'
+            className='text-center text-[20px] font-semibold py-4 light:text-zinc-200 '
           >
             Suggested Profiles
           </h2>
