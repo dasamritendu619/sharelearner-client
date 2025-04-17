@@ -55,7 +55,7 @@ export default function AssetPostForm({ data, type }) {
     const predictions = await modelRef.current.classify(image);
 
     const isUnsafe = predictions.some(p =>
-      (p.className === 'Porn' || p.className === 'Hentai' || p.className === 'Sexy') &&
+      (p.className === 'Porn' || p.className === 'Sexy') &&
       p.probability > 0.6
     );
 
