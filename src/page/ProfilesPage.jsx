@@ -171,7 +171,7 @@ export default function ProfilesPage() {
   }, [user])
 
   return (
-    <div className='fixed top-[94px] overflow-y-auto  h-[calc(100vh-94px)] sm:h-[calc(100vh-58px)] left-0 sm:top-[56px] w-screen'>
+    <div className='fixed bg-blue-100 dark:bg-gray-950 top-[94px] overflow-y-auto  h-[calc(100vh-94px)] sm:h-[calc(100vh-58px)] left-0 sm:top-[56px] w-screen'>
       {
         (suggestedUsersLoading || suggestedUsers.docs.length > 0) && <div className='profailsContainer'>
           <h2
